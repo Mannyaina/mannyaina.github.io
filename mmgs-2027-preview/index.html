@@ -1,0 +1,525 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="MMGS">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}[hidden]{display:none!important}img{max-width:100%}</style>
+<title>MMGS 2027 Preview</title>
+<meta name="robots" content="noindex, nofollow">
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="theme-color" content="#1B1516">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400..700;1,9..144,400..600&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&display=swap">
+<style>
+/* Layout: one phone-width column per tab, fixed four-tab bar at the bottom (Home · FAQs · Updates · 2026) */
+:root{
+  --bg:#1B1516; --glow:#3A2A21; --card:#241D1D; --card-hi:#2E2420;
+  --ink:#F3ECE3; --soft:#D9CFC4; --muted:#A99B8F; --line:#3B312C; --edge:#5C4735;
+  --gold:#C69A5E; --gold-hi:#D9B27A; --on-gold:#1B1516;
+  --display:"Fraunces", "Iowan Old Style", Georgia, serif;
+  --text:"Newsreader", "Iowan Old Style", Georgia, serif;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{min-height:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 18px/1.55 var(--text);-webkit-font-smoothing:antialiased;
+  background-image:radial-gradient(120% 55% at 50% -8%, var(--glow) 0%, rgba(27,21,22,0) 70%);background-attachment:fixed}
+button{font:inherit;color:inherit}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--gold-hi);outline-offset:3px;border-radius:6px}
+.view{max-width:560px;margin:0 auto;padding-left:max(24px, env(safe-area-inset-left, 0px));padding-right:max(24px, env(safe-area-inset-right, 0px));padding-block:56px calc(120px + env(safe-area-inset-bottom, 0px))}
+.eyebrow{font:600 12px/1.3 var(--display);letter-spacing:.2em;text-transform:uppercase;color:var(--gold)}
+h1{margin:14px 0 0;font:600 clamp(52px,15vw,68px)/1 var(--display);letter-spacing:-.015em;font-variation-settings:"opsz" 144}
+h1 em{font-style:italic;font-weight:400;color:var(--gold)}
+h2{margin:0;font:600 30px/1.2 var(--display);text-wrap:balance}
+h3{margin:0;font:600 21px/1.25 var(--display)}
+p{margin:0}
+.lead{font-size:23px;line-height:1.4;margin-top:18px}
+.rule{width:52px;height:1px;background:var(--gold);margin:44px 0}
+.sub{color:var(--muted);font-size:19px;line-height:1.55;margin-top:12px}
+.btn{display:flex;align-items:center;justify-content:center;width:100%;min-height:62px;margin-top:30px;border:0;border-radius:12px;background:var(--gold);color:var(--on-gold);font:600 21px var(--display);cursor:pointer;transition:background .15s}
+.btn:hover{background:var(--gold-hi)}
+.btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--edge);margin-top:12px}
+.latest{margin-top:56px;padding-top:26px;border-top:1px solid var(--line)}
+.latest .eyebrow{font-size:12px}
+.latest p{color:var(--soft);font-size:18.5px;margin-top:10px}
+.latest small{display:block;margin-top:8px;color:var(--muted);font-size:14px;font-style:italic}
+
+/* FAQs */
+.faq{margin-top:28px;border-top:1px solid var(--line)}
+.faq details{border-bottom:1px solid var(--line)}
+.faq summary{list-style:none;display:flex;justify-content:space-between;align-items:center;gap:16px;padding:20px 0;cursor:pointer;font:600 19.5px/1.3 var(--display)}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary svg{flex:none;color:var(--gold);transition:transform .2s}
+.faq details[open] summary svg{transform:rotate(45deg)}
+.faq details p{padding:0 0 22px;color:var(--soft);font-size:18px}
+.note{margin-top:28px;color:var(--muted);font-style:italic;font-size:15.5px}
+
+/* Updates */
+.updates{margin-top:28px;display:flex;flex-direction:column}
+.update{padding:24px 0;border-top:1px solid var(--line)}
+.update:last-child{border-bottom:1px solid var(--line)}
+.update time{font:600 12px var(--display);letter-spacing:.2em;text-transform:uppercase;color:var(--gold)}
+.update h3{margin-top:8px}
+.update p{color:var(--soft);margin-top:8px;font-size:18px}
+
+/* 2026 archive */
+.hero{position:relative;margin:0 auto;max-width:560px;aspect-ratio:739/285;overflow:hidden}
+.hero img{display:block;width:100%;height:100%;object-fit:cover}
+.hero::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(27,21,22,0) 45%,var(--bg) 100%)}
+#v-2026 .view{padding-top:34px}
+.theme{font:italic 400 24px/1.3 var(--display);color:var(--soft);margin-top:10px}
+.archive-lead{font-size:21px;margin-top:30px}
+.row-link{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-top:30px;padding:22px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);text-decoration:none}
+.row-link b{display:block;font:600 25px/1.2 var(--display)}
+.row-link span{display:block;font-style:italic;color:var(--muted);font-size:18px;margin-top:4px}
+.row-link svg{flex:none;color:var(--gold)}
+.pack-card{display:block;width:100%;text-align:left;margin-top:26px;padding:26px 24px;border:1px solid var(--gold);border-radius:16px;background:linear-gradient(160deg,#2D231E,#1F1919);cursor:pointer}
+.pack-card .t{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.pack-card b{font:600 28px/1.15 var(--display)}
+.pack-card b em{font-style:italic;font-weight:400;color:var(--gold)}
+.pack-card p{font-style:italic;color:var(--soft);font-size:18.5px;line-height:1.6;margin-top:12px}
+.pack-card svg{flex:none;color:var(--gold)}
+
+/* Settlement Pack */
+.back{display:inline-flex;align-items:center;gap:8px;background:none;border:0;padding:6px 0;min-height:44px;color:var(--gold);font:400 22px var(--display);cursor:pointer}
+.pack-title{margin-top:20px;font:600 clamp(36px,10vw,44px)/1.1 var(--display)}
+.pack-title em{font-style:italic;font-weight:400;color:var(--gold)}
+.items{display:flex;flex-direction:column;gap:18px;margin-top:30px}
+.item{display:flex;align-items:center;gap:20px;width:100%;text-align:left;padding:22px 22px;border:1px solid var(--edge);border-radius:16px;background:var(--card);cursor:pointer}
+.item:hover{background:var(--card-hi)}
+.item .n{flex:none;width:44px;font:italic 400 30px var(--display);color:var(--gold);font-variant-numeric:lining-nums}
+.item .tx{flex:1;min-width:0}
+.item b{display:block;font:600 22px/1.25 var(--display)}
+.item span{display:block;color:var(--muted);font-size:18px;margin-top:4px}
+.item svg{flex:none;color:var(--gold)}
+.keep{margin-top:44px;padding-top:24px;border-top:1px solid var(--line);text-align:center;font-style:italic;color:var(--muted);font-size:17px}
+
+/* Bottom bar */
+nav.tabs{position:fixed;left:0;right:0;bottom:0;z-index:20;background:var(--bg);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px);padding-left:env(safe-area-inset-left,0px);padding-right:env(safe-area-inset-right,0px)}
+nav.tabs .in{display:grid;grid-template-columns:repeat(4,1fr);max-width:560px;margin:0 auto}
+.tab{position:relative;display:flex;flex-direction:column;align-items:center;gap:4px;padding:16px 0 12px;min-height:72px;background:none;border:0;color:var(--muted);font:500 16px var(--display);cursor:pointer}
+.tab[aria-current="page"]{color:var(--gold)}
+.tab[aria-current="page"]::before{content:"";position:absolute;top:-1px;left:50%;width:36px;height:3px;margin-left:-18px;background:var(--gold);border-radius:2px}
+.tab .dot{position:absolute;top:13px;left:calc(50% + 8px);width:8px;height:8px;border-radius:50%;background:var(--gold-hi)}
+
+/* Keep me in the loop sheet */
+.scrim{position:fixed;inset:0;z-index:40;background:rgba(10,7,7,.62);display:flex;align-items:flex-end;justify-content:center}
+.sheet{width:100%;max-width:560px;background:#231C1C;border:1px solid var(--line);border-bottom:0;border-radius:22px 22px 0 0;padding:26px max(24px, env(safe-area-inset-right, 0px)) calc(28px + env(safe-area-inset-bottom,0px)) max(24px, env(safe-area-inset-left, 0px));animation:up .25s ease-out}
+@keyframes up{from{transform:translateY(40px);opacity:0}to{transform:none;opacity:1}}
+.sheet .grab{width:42px;height:4px;border-radius:2px;background:var(--edge);margin:0 auto 20px}
+.sheet h2{font-size:26px}
+.sheet .sub{font-size:17px}
+.choice{display:flex;gap:16px;align-items:center;width:100%;text-align:left;margin-top:16px;padding:18px;border:1px solid var(--edge);border-radius:14px;background:var(--card);cursor:pointer}
+.choice svg{flex:none;color:var(--gold)}
+.choice b{display:block;font:600 19px var(--display)}
+.choice span{display:block;color:var(--muted);font-size:16px;margin-top:2px}
+form.loop{display:flex;flex-direction:column;gap:12px;margin-top:18px}
+form.loop label{font:600 13px var(--display);letter-spacing:.14em;text-transform:uppercase;color:var(--gold)}
+form.loop input{width:100%;min-height:52px;padding:0 14px;border-radius:12px;border:1px solid var(--edge);background:#1B1516;color:var(--ink);font:400 18px var(--text)}
+form.loop .fine{color:var(--muted);font-size:14.5px;font-style:italic}
+.done{text-align:center;padding:10px 0 4px}
+.done svg{color:var(--gold)}
+.done h2{margin-top:12px}
+
+/* Document viewer */
+.viewer{position:fixed;inset:0;z-index:50;background:#120E0E;display:flex;flex-direction:column}
+.vbar{display:flex;align-items:center;gap:10px;padding:calc(8px + env(safe-area-inset-top,0px)) max(12px, env(safe-area-inset-right, 0px)) 8px max(12px, env(safe-area-inset-left, 0px));border-bottom:1px solid var(--line);background:var(--bg)}
+.vbar .back{font-size:19px;padding:0 10px}
+.vbar b{flex:1;min-width:0;font:600 17px var(--display);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.vbar a{min-height:44px;display:inline-flex;align-items:center;padding:0 14px;border-radius:999px;border:1px solid var(--edge);color:var(--gold-hi);font:600 15px var(--display);text-decoration:none}
+.pages{flex:1;overflow:auto;-webkit-overflow-scrolling:touch;padding:14px max(12px, env(safe-area-inset-right, 0px)) calc(24px + env(safe-area-inset-bottom,0px)) max(12px, env(safe-area-inset-left, 0px));display:flex;flex-direction:column;gap:12px;align-items:center}
+.page{position:relative;width:100%;max-width:900px}
+.page img{display:block;width:100%;height:auto;border-radius:6px;background:#2A211C}
+.page a.hot{position:absolute;border-radius:6px;outline:2px solid rgba(217,178,122,.0);animation:hint 2.4s ease-in-out 2}
+@keyframes hint{50%{outline-color:rgba(217,178,122,.9);background:rgba(217,178,122,.14)}}
+.hint{color:var(--muted);font-style:italic;font-size:15px;text-align:center}
+.trial{position:fixed;top:calc(10px + env(safe-area-inset-top,0px));right:max(10px, env(safe-area-inset-right, 0px));z-index:30;padding:4px 10px;border-radius:999px;border:1px solid var(--edge);background:rgba(27,21,22,.85);color:var(--muted);font:600 11px var(--display);letter-spacing:.14em;text-transform:uppercase}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+
+
+<div class="trial" id="trialTag" aria-hidden="true" hidden>Preview</div>
+
+<!-- HOME -->
+<main id="v-home" class="v">
+  <div class="view">
+    <div class="eyebrow">Maximised Married Global Summit</div>
+    <h1>MMGS <em id="yr">2027</em></h1>
+    <p class="lead" id="dates">Thursday 28 to Sunday 31 October 2027</p>
+    <div class="rule" aria-hidden="true"></div>
+    <h2 id="headline">MMGS 2027 is taking shape</h2>
+    <p class="sub" id="intro">Be the first to know when booking goes live by clicking the button below</p>
+    <button class="btn" type="button" id="loopBtn">Keep me in the loop</button>
+    <section class="latest" aria-labelledby="latestLbl">
+      <div class="eyebrow" id="latestLbl">Latest update</div>
+      <p id="latestText"></p>
+      <small id="latestMore"></small>
+    </section>
+  </div>
+</main>
+
+<!-- FAQs -->
+<main id="v-faqs" class="v" hidden>
+  <div class="view">
+    <div class="eyebrow">MMGS 2027</div>
+    <h2 style="margin-top:12px;font-size:40px">Questions, <em style="font-style:italic;font-weight:400;color:var(--gold)">answered</em></h2>
+    <div class="faq" id="faqList"></div>
+    <p class="note">Something else? Ask us at the summit inbox once booking opens.</p>
+  </div>
+</main>
+
+<!-- UPDATES -->
+<main id="v-updates" class="v" hidden>
+  <div class="view">
+    <div class="eyebrow">MMGS 2027</div>
+    <h2 style="margin-top:12px;font-size:40px">Updates</h2>
+    <p class="sub">News from the summit team, newest first.</p>
+    <div class="updates" id="updList"></div>
+  </div>
+</main>
+
+<!-- 2026 ARCHIVE -->
+<main id="v-2026" class="v" hidden>
+  <div class="hero"><img src="img/hero-2026.jpg" alt="Couples and speakers together at MMGS 2026"></div>
+  <div class="view">
+    <div class="eyebrow">The archive</div>
+    <h1>MMGS <em>2026</em></h1>
+    <p class="theme">The Season of Settlement</p>
+    <p class="archive-lead">Revisit the weekend.</p>
+    <a class="row-link" id="photosLink" href="#" target="_blank" rel="noopener">
+      <div><b>Photos</b><span>Moments from the weekend</span></div>
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7M9 7h8v8"/></svg>
+    </a>
+    <button class="pack-card" type="button" data-go="pack">
+      <div class="t"><b>The Settlement <em>Pack</em></b>
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></div>
+      <p>The weekend does not end today. Carry it home, one piece at a time.</p>
+    </button>
+  </div>
+</main>
+
+<!-- SETTLEMENT PACK -->
+<main id="v-pack" class="v" hidden>
+  <div class="view" style="padding-top:40px">
+    <button class="back" type="button" data-go="2026">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg>2026</button>
+    <h2 class="pack-title">The Settlement <em>Pack</em></h2>
+    <div class="items" id="packList"></div>
+    <p class="keep">Yours to keep · share with a couple who needs it</p>
+  </div>
+</main>
+
+<nav class="tabs" aria-label="Sections">
+  <div class="in">
+    <button class="tab" type="button" data-go="home" aria-current="page">
+      <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 11l8-7 8 7v8.5a1.5 1.5 0 0 1-1.5 1.5H15v-6H9v6H5.5A1.5 1.5 0 0 1 4 19.5z"/></svg>Home</button>
+    <button class="tab" type="button" data-go="faqs">
+      <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.6 9.3a2.5 2.5 0 0 1 4.8.9c0 1.7-2.4 2.2-2.4 3.8"/><circle cx="12" cy="17.2" r=".6" fill="currentColor"/></svg>FAQs</button>
+    <button class="tab" type="button" data-go="updates">
+      <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9a6 6 0 0 1 12 0c0 6 2.5 8 2.5 8h-17S6 15 6 9"/><path d="M10.3 20a1.9 1.9 0 0 0 3.4 0"/></svg>Updates<span class="dot" id="updDot" hidden></span></button>
+    <button class="tab" type="button" data-go="2026">
+      <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="4" width="17" height="4.5" rx="1"/><path d="M5 8.5V19a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V8.5M10 12h4"/></svg>2026</button>
+  </div>
+</nav>
+
+<!-- Keep me in the loop -->
+<div class="scrim" id="loop" hidden>
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="loopTitle">
+    <div class="grab" aria-hidden="true"></div>
+    <div id="loopPick">
+      <h2 id="loopTitle">Keep me in the loop</h2>
+      <p class="sub">Choose one or both. We'll only get in touch about MMGS.</p>
+      <button class="choice" type="button" id="pickPush">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9a6 6 0 0 1 12 0c0 6 2.5 8 2.5 8h-17S6 15 6 9"/><path d="M10.3 20a1.9 1.9 0 0 0 3.4 0"/></svg>
+        <div><b>Get a notification</b><span>An alert on this phone the moment booking opens</span></div></button>
+      <button class="choice" type="button" id="pickEmail">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3.5 6.5l8.5 6.5 8.5-6.5"/></svg>
+        <div><b>Leave my email</b><span>Booking details straight to your inbox</span></div></button>
+      <button class="btn ghost" type="button" data-close>Not now</button>
+    </div>
+    <form class="loop" id="loopForm" hidden novalidate>
+      <h2>Leave your details</h2>
+      <label for="lfName">Your names</label>
+      <input id="lfName" name="name" autocomplete="name" placeholder="e.g. Tunde &amp; Ada Bello" required>
+      <label for="lfEmail">Email</label>
+      <input id="lfEmail" name="email" type="email" autocomplete="email" inputmode="email" placeholder="you@example.com" required>
+      <p class="fine" id="lfMsg">We'll email you when booking for MMGS 2027 opens.</p>
+      <button class="btn" type="submit" style="margin-top:6px">Keep me in the loop</button>
+      <button class="btn ghost" type="button" data-close>Cancel</button>
+    </form>
+    <div class="done" id="loopDone" hidden>
+      <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M8 12.5l2.6 2.6L16 9.6"/></svg>
+      <h2 id="doneTitle">You're on the list</h2>
+      <p class="sub" id="doneText">We'll let you know the moment booking goes live.</p>
+      <button class="btn" type="button" data-close>Done</button>
+    </div>
+  </div>
+</div>
+
+<!-- Document viewer -->
+<div class="viewer" id="viewer" hidden>
+  <div class="vbar">
+    <button class="back" type="button" id="vClose"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg>Back</button>
+    <b id="vTitle"></b>
+    <a id="vSave" href="#" target="_blank" rel="noopener">Open PDF</a>
+  </div>
+  <div class="pages" id="vPages"></div>
+</div>
+
+<script>
+(() => {
+/* ---------- Settings ---------- */
+const CONFIG = {
+  APP_VERSION: "2027-a",             // bump on every deploy (matches version.json) so open phones refresh themselves
+  SHEET_ID: "1oA8VB-vVHcrw1fBJNPwb1HelUL5suXcjZu6mpkMX_4Q",   // 2027 tabs only: 2027 Home, 2027 Updates, 2027 FAQs
+  SCRIPT_URL: "https://script.google.com/macros/s/AKfycbz_Fkd0qOKrE54LZ2S_rNtQhBKwZXo0A7fgqiz-KJ8DTonPeRhGBXS1DHk3rf-FsME/exec",
+  ONESIGNAL_APP_ID: "5d599ae5-1aa8-428e-95b8-e3020996cfb3",
+  SAFARI_WEB_ID: "web.onesignal.auto.251f0eae-dd1c-4527-b78a-dfbe622fe6a9",
+  REFRESH_SECONDS: 120
+};
+const LIVE = /netlify\.app$/.test(location.hostname);
+const PREVIEW = /github\.io$/.test(location.hostname);   // team preview: reads the Sheet, but sends nothing   // anywhere else (like this preview) runs as a trial: nothing is sent
+
+/* ---------- Content (built-in copy; the live app refreshes it from the Google Sheet) ---------- */
+const SITE = {
+  year: "2027",
+  dates: "Thursday 28 to Sunday 31 October 2027",
+  headline: "MMGS 2027 is taking shape",
+  intro: "Be the first to know when booking goes live by clicking the button below",
+  button: "Keep me in the loop",
+  buttonLink: "",
+  photos: "https://drive.google.com/drive/folders/1lI1QfyegSvpCiku2S4-9GitWm3llL_2B"
+};
+let UPDATES = [
+  { date: "18 Nov 2026", title: "New dates: the October half-term",
+    text: "We have moved the dates into the October half-term, so you can arrange care for children at home." },
+  { date: "Oct 2026", title: "Photos from MMGS 2026 are up",
+    text: "Relive The Season of Settlement. Open the 2026 tab and tap Photos." }
+];
+let FAQS = [
+  { q: "When is MMGS 2027?", a: "Thursday 28 to Sunday 31 October 2027, during the October half-term." },
+  { q: "Where will it be held?", a: "The venue will be announced here soon. Tap Keep me in the loop on the Home screen to hear first." },
+  { q: "How do we book?", a: "Booking isn't open yet. Tap Keep me in the loop and we'll tell you the moment it goes live." },
+  { q: "Who is the summit for?", a: "Married couples who want to grow together. Come as you are, and leave restored, strengthened and established." },
+  { q: "Can we still get the 2026 resources?", a: "Yes. Open the 2026 tab for the photos and the full Settlement Pack, yours to keep." }
+];
+const PACK = [
+  { t: "The 30-Day Challenge", s: "One small act a day", url: "pack/30-day-challenge.pdf", pages: 2 },
+  { t: "Communication That Restores", s: "Adaeze's conversation guide", url: "pack/communication-that-restores.pdf", pages: 8 },
+  { t: "Healthy Marriage Assessment", s: "The Woods' worksheet", url: "pack/healthy-marriage-assessment.pdf", pages: 3 },
+  { t: "Continue the Journey", s: "Books from your speakers", url: "pack/continue-the-journey.pdf", pages: 1,
+    links: [[1,75.65,21.37,12.58,8.95,"https://coach.marriage4real.co.uk/21laws"],[1,75.65,46.32,12.58,8.89,"https://www.amazon.co.uk/dp/1999323009"],[1,72.02,71.74,11.94,8.49,"https://linktr.ee/droduwolebooks"],[1,70.5,35.88,22.89,2.35,"https://coach.marriage4real.co.uk/21laws"],[1,71.95,60.83,20.05,2.35,"https://www.amazon.co.uk/dp/1999323009"],[1,69.52,82.74,16.96,2.35,"https://linktr.ee/droduwolebooks"]] }
+];
+
+const $ = s => document.querySelector(s);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;" }[c]));
+const store = { get(k){ try { return localStorage.getItem(k); } catch(e){ return null; } }, set(k,v){ try { localStorage.setItem(k,v); } catch(e){} } };
+const CHEV = '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>';
+const PLUS = '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>';
+
+function render(){
+  $("#yr").textContent = SITE.year;
+  $("#dates").textContent = SITE.dates;
+  $("#headline").textContent = SITE.headline;
+  $("#intro").textContent = SITE.intro;
+  const u = UPDATES[0];
+  $("#latestText").textContent = u ? u.text : "";
+  $("#latestMore").textContent = UPDATES.length > 1 ? `${UPDATES.length} updates · see the Updates tab` : "";
+  $("#updList").innerHTML = UPDATES.map(x => `<article class="update"><time>${esc(x.date)}</time><h3>${esc(x.title)}</h3><p>${esc(x.text)}</p></article>`).join("");
+  $("#faqList").innerHTML = FAQS.map(f => `<details><summary>${esc(f.q)}${PLUS}</summary><p>${esc(f.a)}</p></details>`).join("");
+  $("#packList").innerHTML = PACK.map((p, i) => `<button class="item" type="button" data-doc="${i}"><span class="n">${String(i + 1).padStart(2, "0")}</span><span class="tx"><b>${esc(p.t)}</b><span>${esc(p.s)}</span></span>${CHEV}</button>`).join("");
+  $("#photosLink").href = SITE.photos;
+  $("#loopBtn").textContent = SITE.button || "Keep me in the loop";
+  $("#updDot").hidden = store.get("mmgs27-seen-update") === (u && u.title);
+}
+
+/* ---------- Tabs ---------- */
+const VIEWS = ["home", "faqs", "updates", "2026", "pack"];
+function go(v){
+  if (!VIEWS.includes(v)) v = "home";
+  VIEWS.forEach(k => $("#v-" + k).hidden = k !== v);
+  const tab = v === "pack" ? "2026" : v;
+  document.querySelectorAll(".tab").forEach(t => t.setAttribute("aria-current", t.dataset.go === tab ? "page" : "false"));
+  track("view", v);
+  if (v === "updates" && UPDATES[0]){ store.set("mmgs27-seen-update", UPDATES[0].title); $("#updDot").hidden = true; }
+  window.scrollTo(0, 0);
+}
+
+/* ---------- Keep me in the loop ---------- */
+function openLoop(){ $("#loopPick").hidden = false; $("#loopForm").hidden = true; $("#loopDone").hidden = true; $("#loop").hidden = false; }
+function closeLoop(){ $("#loop").hidden = true; }
+function done(title, text){ $("#loopPick").hidden = true; $("#loopForm").hidden = true; $("#doneTitle").textContent = title; $("#doneText").textContent = text; $("#loopDone").hidden = false; }
+
+/* ---------- Document viewer ---------- */
+function openDoc(i){
+  const p = PACK[i]; if (!p) return;
+  $("#vTitle").textContent = p.t;
+  $("#vSave").href = p.url;
+  const base = p.url.replace(/\.pdf$/, "");
+  let html = "";
+  for (let n = 1; n <= p.pages; n++){
+    const hot = (p.links || []).filter(l => l[0] === n).map(l => `<a class="hot" href="${esc(l[5])}" target="_blank" rel="noopener" style="left:${l[1]}%;top:${l[2]}%;width:${l[3]}%;height:${l[4]}%" aria-label="Open ${esc(l[5].replace(/^https?:\/\/(www\.)?/, ""))}"></a>`).join("");
+    html += `<div class="page"><img src="${base}/page-${n}.jpg" alt="${esc(p.t)}, page ${n} of ${p.pages}" ${n > 2 ? 'loading="lazy"' : ""}>${hot}</div>`;
+  }
+  if (p.links) html += `<p class="hint">Tap a QR code or link to open it</p>`;
+  $("#vPages").innerHTML = html; $("#vPages").scrollTop = 0;
+  $("#viewer").hidden = false;
+}
+
+document.addEventListener("click", e => {
+  const g = e.target.closest("[data-go]"); if (g){ e.preventDefault(); go(g.dataset.go); return; }
+  const d = e.target.closest("[data-doc]"); if (d){ track("pdf", PACK[+d.dataset.doc].t); openDoc(+d.dataset.doc); return; }
+  if (e.target.closest("#photosLink")) track("link", "2026 photos");
+  if (e.target.closest("#loopBtn")){
+    if (SITE.buttonLink){ track("link", SITE.button); window.open(SITE.buttonLink, "_blank", "noopener"); return; }
+    track("loop", "open"); openLoop(); return;
+  }
+  if (e.target.closest("[data-close]") || e.target === $("#loop")){ closeLoop(); return; }
+  if (e.target.closest("#pickPush")){ turnOnAlerts(); return; }
+  if (e.target.closest("#pickEmail")){ $("#loopPick").hidden = true; $("#loopForm").hidden = false; $("#lfName").focus(); return; }
+  if (e.target.closest("#vClose")){ $("#viewer").hidden = true; return; }
+});
+$("#loopForm").addEventListener("submit", e => {
+  e.preventDefault();
+  const name = $("#lfName").value.trim(), email = $("#lfEmail").value.trim();
+  if (!name || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)){ $("#lfMsg").textContent = "Please add your names and a valid email address."; return; }
+  if (LIVE){
+    send({ signup: { name, email } });
+    track("loop", "email");
+    done("You're on the list", `Thanks, ${name}. We'll email ${email} when booking opens.`);
+  } else done("You're on the list", `Thanks, ${name}. We'll email ${email} when booking opens. (Preview: nothing was sent.)`);
+});
+document.addEventListener("keydown", e => { if (e.key === "Escape"){ closeLoop(); $("#viewer").hidden = true; } });
+
+/* ---------- Live data from the Google Sheet (2027 tabs only) ---------- */
+function parseCSV(t){
+  const rows = []; let row = [], f = "", q = false;
+  for (let i = 0; i < t.length; i++){
+    const c = t[i];
+    if (q){ if (c === '"'){ if (t[i+1] === '"'){ f += '"'; i++; } else q = false; } else f += c; }
+    else if (c === '"') q = true;
+    else if (c === ","){ row.push(f); f = ""; }
+    else if (c === "\n"){ row.push(f); rows.push(row); row = []; f = ""; }
+    else if (c !== "\r") f += c;
+  }
+  if (f || row.length){ row.push(f); rows.push(row); }
+  return rows;
+}
+const norm = s => String(s || "").toLowerCase().replace(/[^a-z0-9]/g, "");
+async function tab(name){
+  const url = `https://docs.google.com/spreadsheets/d/${CONFIG.SHEET_ID}/gviz/tq?tqx=out:csv&headers=1&sheet=${encodeURIComponent(name)}&t=${Date.now()}`;
+  const rows = parseCSV(await (await fetch(url, { cache: "no-store" })).text());
+  const head = (rows.shift() || []).map(norm);
+  return rows.map(r => Object.fromEntries(head.map((k, i) => [k, (r[i] || "").trim()]))).filter(o => Object.values(o).some(Boolean));
+}
+function apply(data){
+  const s = {}; (data.home || []).forEach(r => { if (r.setting) s[norm(r.setting)] = r.value; });
+  if (s.year) SITE.year = s.year;
+  if (s.dates) SITE.dates = s.dates;
+  if (s.headline) SITE.headline = s.headline;
+  if (s.intro) SITE.intro = s.intro;
+  if (s.buttontext) SITE.button = s.buttontext;
+  SITE.buttonLink = /^https?:/i.test(s.buttonlink || "") ? s.buttonlink : "";
+  if (s["2026photoslink"]) SITE.photos = s["2026photoslink"];
+  const u = (data.updates || []).filter(r => r.title || r.text).map(r => ({ date: r.date, title: r.title, text: r.text }));
+  if (u.length) UPDATES = u;
+  const f = (data.faqs || []).filter(r => r.question).map(r => ({ q: r.question, a: r.answer }));
+  if (f.length) FAQS = f;
+}
+async function load(){
+  if (!LIVE && !PREVIEW) return;
+  try {
+    const [home, updates, faqs] = await Promise.all([tab("2027 Home"), tab("2027 Updates"), tab("2027 FAQs")]);
+    const data = { home, updates, faqs };
+    if (!home.some(r => r.setting)) throw new Error("Sheet tabs not found");
+    store.set("mmgs27-data", JSON.stringify(data));
+    apply(data); render();
+  } catch(e){ console.warn("Sheet:", e); }
+  checkUpdate();
+}
+
+/* ---------- Sending to the Sheet (sign-ups and anonymous stats go to separate 2027 tabs) ---------- */
+function phoneId(){
+  let id = store.get("mmgs26-id");                       // same phone code as 2026, so the same phone is recognised
+  if (!id){ id = Math.random().toString(36).slice(2, 10) + Date.now().toString(36).slice(-4); store.set("mmgs26-id", id); }
+  return id;
+}
+const isIOS = () => /iphone|ipad|ipod/i.test(navigator.userAgent) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+const isStandalone = () => { try { return matchMedia("(display-mode: standalone)").matches || navigator.standalone === true; } catch(e){ return false; } };
+const device = () => isIOS() ? "iPhone" : /android/i.test(navigator.userAgent) ? "Android" : "Other";
+function send(extra){
+  if (!LIVE) return;
+  const body = JSON.stringify(Object.assign({ y: "2027", d: phoneId(), p: device(), s: isStandalone() ? "yes" : "no", a: pushOn() ? "on" : "off" }, extra));
+  try {
+    if (!(navigator.sendBeacon && navigator.sendBeacon(CONFIG.SCRIPT_URL, new Blob([body], { type: "text/plain" }))))
+      fetch(CONFIG.SCRIPT_URL, { method: "POST", mode: "no-cors", body, keepalive: true }).catch(() => {});
+  } catch(e){}
+}
+let statQ = [], lastView = "";
+function track(type, name){
+  if (!LIVE) return;
+  if (type === "view"){ if (name === lastView) return; lastView = name; }
+  statQ.push([Date.now(), type, String(name || "").slice(0, 80)]);
+  if (statQ.length >= 20) flush();
+}
+function flush(){ if (statQ.length){ send({ ev: statQ }); statQ = []; } }
+setInterval(flush, 30000);
+document.addEventListener("visibilitychange", () => { if (document.visibilityState === "hidden") flush(); else load(); });
+window.addEventListener("pagehide", flush);
+
+/* ---------- Notifications (OneSignal, the same service the 2026 alerts use) ---------- */
+let OS = null;
+const pushOn = () => { try { return !!(OS && OS.User.PushSubscription.optedIn); } catch(e){ return false; } };
+if (LIVE && CONFIG.ONESIGNAL_APP_ID){
+  window.OneSignalDeferred = window.OneSignalDeferred || [];
+  const sc = document.createElement("script"); sc.src = "https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js"; sc.defer = true; document.head.appendChild(sc);
+  window.OneSignalDeferred.push(async OneSignal => {
+    try {
+      await OneSignal.init({ appId: CONFIG.ONESIGNAL_APP_ID, safari_web_id: CONFIG.SAFARI_WEB_ID, serviceWorkerPath: "OneSignalSDKWorker.js",
+        welcomeNotification: { title: "MMGS 2027", message: "You're in the loop. We'll tell you the moment booking opens." } });
+      OS = OneSignal;
+    } catch(e){ console.warn("OneSignal:", e); }
+  });
+}
+async function turnOnAlerts(){
+  if (!LIVE){ done("Notifications are on", "In the live app this asks your phone to allow alerts, then we'll notify you when booking opens. (Preview: nothing was changed.)"); return; }
+  if (!OS || !("Notification" in window)){
+    done("One quick step", isIOS() && !isStandalone()
+      ? "On iPhone, add this app to your Home Screen (Share, then Add to Home Screen), open it from there, and tap Get a notification again."
+      : "This browser can't show notifications. Leave your email instead and we'll keep you posted.");
+    return;
+  }
+  try {
+    if (!OS.Notifications.permission) await OS.Notifications.requestPermission();
+    if (OS.Notifications.permission){
+      await OS.User.PushSubscription.optIn();
+      try { OS.User.addTag("mmgs2027", "interested"); } catch(e){}
+      track("loop", "notifications");
+      done("Notifications are on", "We'll send an alert to this phone the moment booking goes live.");
+    } else done("Notifications are off", "You can allow them later in your phone's settings, or leave your email instead.");
+  } catch(e){ done("Something went wrong", "Please try again, or leave your email instead."); }
+}
+
+/* ---------- Auto-update: phones pick up a new deploy without reinstalling ---------- */
+function checkUpdate(){
+  fetch("version.json?t=" + Date.now(), { cache: "no-store" }).then(r => r.ok ? r.json() : null)
+    .then(j => { if (j && j.v && j.v !== CONFIG.APP_VERSION && $("#viewer").hidden && $("#loop").hidden) location.reload(); }).catch(() => {});
+}
+
+if (!LIVE) $("#trialTag").hidden = false;
+try { const c = JSON.parse(store.get("mmgs27-data")); if (c) apply(c); } catch(e){}
+render(); go("home"); track("open", ""); load();
+setInterval(() => { if (document.visibilityState === "visible") load(); }, CONFIG.REFRESH_SECONDS * 1000);
+})();
+</script>
+
+</body>
+</html>
