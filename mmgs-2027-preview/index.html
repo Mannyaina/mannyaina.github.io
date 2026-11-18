@@ -3,6 +3,16 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Maximised Married Global Summit 2027 · Thursday 28 to Sunday 31 October 2027. Be the first to know when booking opens.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="MMGS">
+<meta property="og:title" content="MMGS 2027 · Maximised Married Global Summit">
+<meta property="og:description" content="Thursday 28 to Sunday 31 October 2027. Save the app and be the first to know when booking opens.">
+<meta property="og:url" content="https://mannyaina.github.io/mmgs-2027-preview/">
+<meta property="og:image" content="https://mannyaina.github.io/mmgs-2027-preview/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -47,6 +57,19 @@ p{margin:0}
 .alt-link{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;min-height:44px;margin-top:14px;background:none;border:0;color:var(--muted);font:italic 400 16.5px var(--text);cursor:pointer}
 .alt-link svg{color:var(--gold)}
 .alt-link:hover{color:var(--soft)}
+.sharebtn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;min-height:54px;margin-top:34px;border:1px solid var(--edge);border-radius:12px;background:transparent;color:var(--ink);font:600 18px var(--display);cursor:pointer}
+.sharebtn svg{color:var(--gold)}
+.sharebtn:hover{border-color:var(--gold)}
+.newhome{display:flex;gap:14px;align-items:flex-start;margin:0 0 30px;padding:16px 16px 14px;border:1px solid var(--gold);border-radius:14px;background:rgba(198,154,94,.08)}
+.newhome .tx{flex:1;min-width:0}
+.newhome b{display:block;font:600 18px/1.25 var(--display)}
+.newhome p{color:var(--soft);font-size:16px;line-height:1.45;margin-top:4px}
+.newhome .url{color:var(--gold-hi);font-weight:500;word-break:break-all}
+.newhome .row{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+.newhome .row button{min-height:40px;padding:0 14px;border-radius:999px;border:1px solid var(--edge);background:transparent;color:var(--ink);font:600 14px var(--display);cursor:pointer}
+.newhome .row button.go{background:var(--gold);border-color:var(--gold);color:var(--on-gold)}
+.newhome .x{flex:none;background:none;border:0;color:var(--muted);font-size:24px;line-height:1;padding:0 4px;min-height:32px;cursor:pointer}
+.toast{position:fixed;left:50%;bottom:calc(92px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:60;padding:10px 18px;border-radius:999px;background:#F3ECE3;color:#1B1516;font:600 15px var(--display);box-shadow:0 8px 24px rgba(0,0,0,.4)}
 .formframe{flex:1;width:100%;border:0;background:#FFFFFF}
 .btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--edge);margin-top:12px}
 .latest{margin-top:56px;padding-top:26px;border-top:1px solid var(--line)}
@@ -155,6 +178,14 @@ form.loop .fine{color:var(--muted);font-size:14.5px;font-style:italic}
 <!-- HOME -->
 <main id="v-home" class="v">
   <div class="view">
+    <div class="newhome" id="newHome" hidden>
+      <div class="tx">
+        <b>MMGS has a new home</b>
+        <p>Save the app again from <span class="url" id="nhUrl">mmgsummit.netlify.app</span> so you always have the latest.</p>
+        <div class="row"><button type="button" class="go" id="nhOpen">Open the new app</button><button type="button" id="nhCopy">Copy link</button></div>
+      </div>
+      <button type="button" class="x" id="nhClose" aria-label="Dismiss">&times;</button>
+    </div>
     <div class="eyebrow">Maximised Married Global Summit</div>
     <h1>MMGS <em id="yr">2027</em></h1>
     <p class="lead" id="dates">Thursday 28 to Sunday 31 October 2027</p>
@@ -170,6 +201,7 @@ form.loop .fine{color:var(--muted);font-size:14.5px;font-style:italic}
       <p id="latestText"></p>
       <small id="latestMore"></small>
     </section>
+    <button class="sharebtn" type="button" id="shareBtn"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 15V3M8 7l4-4 4 4"/><path d="M7 10H5v11h14V10h-2"/></svg>Share the app</button>
   </div>
 </main>
 
@@ -295,7 +327,7 @@ form.loop .fine{color:var(--muted);font-size:14.5px;font-style:italic}
 (() => {
 /* ---------- Settings ---------- */
 const CONFIG = {
-  APP_VERSION: "2027-b",             // bump on every deploy (matches version.json) so open phones refresh themselves
+  APP_VERSION: "2027-c",             // bump on every deploy (matches version.json) so open phones refresh themselves
   SHEET_ID: "1oA8VB-vVHcrw1fBJNPwb1HelUL5suXcjZu6mpkMX_4Q",   // 2027 tabs only: 2027 Home, 2027 Updates, 2027 FAQs
   SCRIPT_URL: "https://script.google.com/macros/s/AKfycbz_Fkd0qOKrE54LZ2S_rNtQhBKwZXo0A7fgqiz-KJ8DTonPeRhGBXS1DHk3rf-FsME/exec",
   ONESIGNAL_APP_ID: "5d599ae5-1aa8-428e-95b8-e3020996cfb3",
@@ -312,6 +344,9 @@ const SITE = {
   headline: "MMGS 2027 is taking shape",
   intro: "Be the first to know when booking goes live by clicking the button below",
   button: "Keep me in the loop",
+  shareLink: "https://mmgsummit.netlify.app/",
+  shareText: "MMGS 2027 · Maximised Married Global Summit, Thursday 28 to Sunday 31 October 2027. Save the app and be the first to know when booking opens:",
+  newHome: true,
   buttonLink: "https://docs.google.com/forms/d/e/1FAIpQLSeIjMzSAdox-QaVCDXur4Y99tVq9Rbu3diBf2VxNGgONvNFSA/viewform",
   photos: "https://drive.google.com/drive/folders/1lI1QfyegSvpCiku2S4-9GitWm3llL_2B"
 };
@@ -355,6 +390,9 @@ function render(){
   $("#packList").innerHTML = PACK.map((p, i) => `<button class="item" type="button" data-doc="${i}"><span class="n">${String(i + 1).padStart(2, "0")}</span><span class="tx"><b>${esc(p.t)}</b><span>${esc(p.s)}</span></span>${CHEV}</button>`).join("");
   $("#photosLink").href = SITE.photos;
   $("#loopBtn").textContent = SITE.button || "Keep me in the loop";
+  $("#nhUrl").textContent = SITE.shareLink.replace(/^https?:\/\//, "").replace(/\/$/, "");
+  const oldHome = /season-of-settlement/.test(location.hostname) || /[?&]old=1/.test(location.search);
+  $("#newHome").hidden = !(SITE.newHome && oldHome && store.get("mmgs27-newhome-closed") !== "1");
   $("#updDot").hidden = store.get("mmgs27-seen-update") === (u && u.title);
 }
 
@@ -374,6 +412,29 @@ function go(v){
 function openLoop(){ $("#loopPick").hidden = false; $("#loopForm").hidden = true; $("#loopDone").hidden = true; $("#loop").hidden = false; }
 function closeLoop(){ $("#loop").hidden = true; }
 function done(title, text){ $("#loopPick").hidden = true; $("#loopForm").hidden = true; $("#doneTitle").textContent = title; $("#doneText").textContent = text; $("#loopDone").hidden = false; }
+
+/* ---------- Sharing: always shares the official address, whichever address the app was opened from ---------- */
+function toast(msg){
+  document.querySelectorAll(".toast").forEach(t => t.remove());
+  const t = document.createElement("div"); t.className = "toast"; t.setAttribute("role", "status"); t.textContent = msg;
+  document.body.appendChild(t); setTimeout(() => t.remove(), 2600);
+}
+function copyText(text, msg){
+  const fallback = () => {
+    const ta = document.createElement("textarea"); ta.value = text; ta.setAttribute("readonly", ""); ta.style.position = "fixed"; ta.style.opacity = "0";
+    document.body.appendChild(ta); ta.select(); let ok = false; try { ok = document.execCommand("copy"); } catch(e){} ta.remove();
+    toast(ok ? msg : "Copy this link: " + text);
+  };
+  try { navigator.clipboard.writeText(text).then(() => toast(msg), fallback); } catch(e){ fallback(); }
+}
+async function shareApp(){
+  track("share", "");
+  const data = { title: "MMGS 2027", text: SITE.shareText, url: SITE.shareLink };
+  if (navigator.share){
+    try { await navigator.share(data); return; } catch(e){ if (e && e.name === "AbortError") return; }
+  }
+  copyText(SITE.shareText + " " + SITE.shareLink, "Link copied. Paste it into WhatsApp or a message");
+}
 
 /* ---------- Links from the gold button: Google Forms open inside the app, anything else in the browser ---------- */
 function openLink(url){
@@ -413,6 +474,10 @@ document.addEventListener("click", e => {
   if (e.target.closest("#pickPush")){ turnOnAlerts(); return; }
   if (e.target.closest("#alertLink")){ $("#loopPick").hidden = true; $("#loopForm").hidden = true; $("#loop").hidden = false; turnOnAlerts(); return; }
   if (e.target.closest("#fClose")){ $("#formView").hidden = true; return; }
+  if (e.target.closest("#shareBtn")){ shareApp(); return; }
+  if (e.target.closest("#nhOpen")){ track("link", "new home"); window.open(SITE.shareLink, "_blank", "noopener"); return; }
+  if (e.target.closest("#nhCopy")){ copyText(SITE.shareLink, "Link copied"); return; }
+  if (e.target.closest("#nhClose")){ store.set("mmgs27-newhome-closed", "1"); $("#newHome").hidden = true; return; }
   if (e.target.closest("#pickEmail")){ $("#loopPick").hidden = true; $("#loopForm").hidden = false; $("#lfName").focus(); return; }
   if (e.target.closest("#vClose")){ $("#viewer").hidden = true; return; }
 });
@@ -458,6 +523,9 @@ function apply(data){
   if (s.buttontext) SITE.button = s.buttontext;
   SITE.buttonLink = /^https?:/i.test(s.buttonlink || "") ? s.buttonlink : "";
   if (s["2026photoslink"]) SITE.photos = s["2026photoslink"];
+  if (/^https?:/i.test(s.sharelink || "")) SITE.shareLink = s.sharelink;
+  if (s.sharemessage) SITE.shareText = s.sharemessage;
+  if (s.newhomenote) SITE.newHome = /^y/i.test(s.newhomenote);
   const u = (data.updates || []).filter(r => r.title || r.text).map(r => ({ date: r.date, title: r.title, text: r.text }));
   if (u.length) UPDATES = u;
   const f = (data.faqs || []).filter(r => r.question).map(r => ({ q: r.question, a: r.answer }));
