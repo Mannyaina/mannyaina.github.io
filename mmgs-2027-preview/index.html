@@ -44,6 +44,10 @@ p{margin:0}
 .sub{color:var(--muted);font-size:19px;line-height:1.55;margin-top:12px}
 .btn{display:flex;align-items:center;justify-content:center;width:100%;min-height:62px;margin-top:30px;border:0;border-radius:12px;background:var(--gold);color:var(--on-gold);font:600 21px var(--display);cursor:pointer;transition:background .15s}
 .btn:hover{background:var(--gold-hi)}
+.alt-link{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;min-height:44px;margin-top:14px;background:none;border:0;color:var(--muted);font:italic 400 16.5px var(--text);cursor:pointer}
+.alt-link svg{color:var(--gold)}
+.alt-link:hover{color:var(--soft)}
+.formframe{flex:1;width:100%;border:0;background:#FFFFFF}
 .btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--edge);margin-top:12px}
 .latest{margin-top:56px;padding-top:26px;border-top:1px solid var(--line)}
 .latest .eyebrow{font-size:12px}
@@ -158,6 +162,9 @@ form.loop .fine{color:var(--muted);font-size:14.5px;font-style:italic}
     <h2 id="headline">MMGS 2027 is taking shape</h2>
     <p class="sub" id="intro">Be the first to know when booking goes live by clicking the button below</p>
     <button class="btn" type="button" id="loopBtn">Keep me in the loop</button>
+    <button class="alt-link" type="button" id="alertLink">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9a6 6 0 0 1 12 0c0 6 2.5 8 2.5 8h-17S6 15 6 9"/><path d="M10.3 20a1.9 1.9 0 0 0 3.4 0"/></svg>
+      Or get an alert on this phone when booking opens</button>
     <section class="latest" aria-labelledby="latestLbl">
       <div class="eyebrow" id="latestLbl">Latest update</div>
       <p id="latestText"></p>
@@ -264,6 +271,16 @@ form.loop .fine{color:var(--muted);font-size:14.5px;font-style:italic}
   </div>
 </div>
 
+<!-- Expression of interest form, shown inside the app -->
+<div class="viewer" id="formView" hidden>
+  <div class="vbar">
+    <button class="back" type="button" id="fClose"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg>Back</button>
+    <b>Keep me in the loop</b>
+    <a id="fOpen" href="#" target="_blank" rel="noopener">Open</a>
+  </div>
+  <iframe class="formframe" id="formFrame" title="MMGS 2027 expression of interest form" loading="lazy"></iframe>
+</div>
+
 <!-- Document viewer -->
 <div class="viewer" id="viewer" hidden>
   <div class="vbar">
@@ -278,7 +295,7 @@ form.loop .fine{color:var(--muted);font-size:14.5px;font-style:italic}
 (() => {
 /* ---------- Settings ---------- */
 const CONFIG = {
-  APP_VERSION: "2027-a",             // bump on every deploy (matches version.json) so open phones refresh themselves
+  APP_VERSION: "2027-b",             // bump on every deploy (matches version.json) so open phones refresh themselves
   SHEET_ID: "1oA8VB-vVHcrw1fBJNPwb1HelUL5suXcjZu6mpkMX_4Q",   // 2027 tabs only: 2027 Home, 2027 Updates, 2027 FAQs
   SCRIPT_URL: "https://script.google.com/macros/s/AKfycbz_Fkd0qOKrE54LZ2S_rNtQhBKwZXo0A7fgqiz-KJ8DTonPeRhGBXS1DHk3rf-FsME/exec",
   ONESIGNAL_APP_ID: "5d599ae5-1aa8-428e-95b8-e3020996cfb3",
@@ -295,7 +312,7 @@ const SITE = {
   headline: "MMGS 2027 is taking shape",
   intro: "Be the first to know when booking goes live by clicking the button below",
   button: "Keep me in the loop",
-  buttonLink: "",
+  buttonLink: "https://docs.google.com/forms/d/e/1FAIpQLSeIjMzSAdox-QaVCDXur4Y99tVq9Rbu3diBf2VxNGgONvNFSA/viewform",
   photos: "https://drive.google.com/drive/folders/1lI1QfyegSvpCiku2S4-9GitWm3llL_2B"
 };
 let UPDATES = [
@@ -358,6 +375,16 @@ function openLoop(){ $("#loopPick").hidden = false; $("#loopForm").hidden = true
 function closeLoop(){ $("#loop").hidden = true; }
 function done(title, text){ $("#loopPick").hidden = true; $("#loopForm").hidden = true; $("#doneTitle").textContent = title; $("#doneText").textContent = text; $("#loopDone").hidden = false; }
 
+/* ---------- Links from the gold button: Google Forms open inside the app, anything else in the browser ---------- */
+function openLink(url){
+  const m = String(url).match(/^https:\/\/docs\.google\.com\/forms\/d\/e\/([\w-]+)/);
+  if (!m){ window.open(url, "_blank", "noopener"); return; }
+  const clean = `https://docs.google.com/forms/d/e/${m[1]}/viewform`;
+  $("#fOpen").href = clean;
+  if ($("#formFrame").dataset.src !== clean){ $("#formFrame").src = clean + "?embedded=true"; $("#formFrame").dataset.src = clean; }
+  $("#formView").hidden = false;
+}
+
 /* ---------- Document viewer ---------- */
 function openDoc(i){
   const p = PACK[i]; if (!p) return;
@@ -379,11 +406,13 @@ document.addEventListener("click", e => {
   const d = e.target.closest("[data-doc]"); if (d){ track("pdf", PACK[+d.dataset.doc].t); openDoc(+d.dataset.doc); return; }
   if (e.target.closest("#photosLink")) track("link", "2026 photos");
   if (e.target.closest("#loopBtn")){
-    if (SITE.buttonLink){ track("link", SITE.button); window.open(SITE.buttonLink, "_blank", "noopener"); return; }
+    if (SITE.buttonLink){ track("loop", "form"); openLink(SITE.buttonLink); return; }
     track("loop", "open"); openLoop(); return;
   }
   if (e.target.closest("[data-close]") || e.target === $("#loop")){ closeLoop(); return; }
   if (e.target.closest("#pickPush")){ turnOnAlerts(); return; }
+  if (e.target.closest("#alertLink")){ $("#loopPick").hidden = true; $("#loopForm").hidden = true; $("#loop").hidden = false; turnOnAlerts(); return; }
+  if (e.target.closest("#fClose")){ $("#formView").hidden = true; return; }
   if (e.target.closest("#pickEmail")){ $("#loopPick").hidden = true; $("#loopForm").hidden = false; $("#lfName").focus(); return; }
   if (e.target.closest("#vClose")){ $("#viewer").hidden = true; return; }
 });
@@ -397,7 +426,7 @@ $("#loopForm").addEventListener("submit", e => {
     done("You're on the list", `Thanks, ${name}. We'll email ${email} when booking opens.`);
   } else done("You're on the list", `Thanks, ${name}. We'll email ${email} when booking opens. (Preview: nothing was sent.)`);
 });
-document.addEventListener("keydown", e => { if (e.key === "Escape"){ closeLoop(); $("#viewer").hidden = true; } });
+document.addEventListener("keydown", e => { if (e.key === "Escape"){ closeLoop(); $("#viewer").hidden = true; $("#formView").hidden = true; } });
 
 /* ---------- Live data from the Google Sheet (2027 tabs only) ---------- */
 function parseCSV(t){
@@ -511,7 +540,7 @@ async function turnOnAlerts(){
 /* ---------- Auto-update: phones pick up a new deploy without reinstalling ---------- */
 function checkUpdate(){
   fetch("version.json?t=" + Date.now(), { cache: "no-store" }).then(r => r.ok ? r.json() : null)
-    .then(j => { if (j && j.v && j.v !== CONFIG.APP_VERSION && $("#viewer").hidden && $("#loop").hidden) location.reload(); }).catch(() => {});
+    .then(j => { if (j && j.v && j.v !== CONFIG.APP_VERSION && $("#viewer").hidden && $("#loop").hidden && $("#formView").hidden) location.reload(); }).catch(() => {});
 }
 
 if (!LIVE) $("#trialTag").hidden = false;
