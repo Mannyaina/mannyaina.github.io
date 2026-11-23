@@ -286,6 +286,14 @@ body.splash main{padding:0}
 .okbox{border:1px solid color-mix(in srgb,var(--ok) 50%,var(--line));background:color-mix(in srgb,var(--ok) 10%,var(--card));border-radius:18px;padding:14px 16px;margin-top:14px}
 .paylink{margin-top:16px}
 #bankApp[aria-disabled=true]{opacity:.55}
+.room{border-radius:24px;padding:20px;background:radial-gradient(120% 100% at 100% 0%,color-mix(in srgb,var(--acc2) 30%,transparent),transparent 60%),var(--card);border:1px solid var(--line)}
+.room .big{font-family:var(--display);font-weight:var(--dw);letter-spacing:var(--dls);font-size:calc(40px * var(--ds));line-height:1.05;margin-top:6px}
+.room .grid2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px;margin-top:16px}
+.room .grid2 div{background:rgba(0,0,0,.22);border-radius:16px;padding:12px 14px}
+.room .grid2 small{display:block;font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.room .grid2 b{display:block;font-size:20px;margin-top:2px}
+.room .notes{margin-top:12px;color:#d6d1c8;font-size:15px}
+.room .mates{margin-top:12px;font-size:14px;color:var(--muted)}
 @media(max-width:370px){.two,.pack{grid-template-columns:minmax(0,1fr)}.sess{grid-template-columns:52px minmax(0,1fr)}}
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 .hero h1 em,.dayhead h2 em,.sech h2 .acc{font-style:normal}
@@ -379,6 +387,7 @@ body.splash main{padding:0}
       <a class="tile" href="#tickets-pay"><svg><use href="#i-card"/></svg><div><b>Pay</b><span>In full or instalments</span></div></a>
       <a class="tile" href="#schedule"><svg><use href="#i-cal"/></svg><div><b>Timetable</b><span>Four days, hour by hour</span></div></a>
       <a class="tile" href="#speakers"><svg><use href="#i-mic"/></svg><div><b>Speakers</b><span>Who's ministering</span></div></a>
+      <a class="tile prepTile" href="#info-room" id="roomTile"><svg><use href="#i-home"/></svg><div style="flex:1"><b>My room</b><span id="roomTileTxt">Find your house and room</span></div></a>
       <a class="tile" href="#info-places"><svg><use href="#i-pin"/></svg><div><b>Locations</b><span>Find your way around</span></div></a>
       <a class="tile" href="#info-pack"><svg><use href="#i-bag"/></svg><div><b>What to bring</b><span>Your packing list</span></div></a>
     </div>
@@ -430,13 +439,9 @@ body.splash main{padding:0}
           <select id="grp" name="Church / group" required></select>
         </fieldset>
         <fieldset class="fs" data-step="1">
-          <h3>Rooms</h3><p class="note">Rooms are shared and split by gender.</p>
+          <h3>Rooms</h3><p class="note">Rooms are shared and split by gender. The team allocates every room and house, and you'll see yours in the app under <b>My room</b> once they're released.</p>
           <label class="l" for="gd">Gender</label>
           <select id="gd" name="Gender (for rooms)" required><option value="">Choose</option><option>Male</option><option>Female</option></select>
-          <label class="l" id="lRoom">Room sharing</label>
-          <div class="opts" role="radiogroup" aria-labelledby="lRoom"><label><input type="radio" name="Room sharing" value="Happy to share with anyone" required>Anyone is fine</label><label><input type="radio" name="Room sharing" value="Want to share with friends">With friends</label></div>
-          <label class="l" for="sw">Friends to share with <small>(optional)</small></label>
-          <input id="sw" name="Share with" placeholder="Up to 3 names">
         </fieldset>
         <fieldset class="fs" data-step="2">
           <h3>Looking after you</h3><p class="note">Only the welfare team sees this.</p>
@@ -505,6 +510,10 @@ body.splash main{padding:0}
       <div><b>Need help on site?</b><div class="note" id="sosText" style="font-size:14px"></div></div>
     </div>
   </div>
+  <div class="sec" id="info-room">
+    <div class="sech"><h2>My room</h2></div>
+    <div id="roomBox"></div>
+  </div>
   <div class="sec" id="info-places">
     <div class="sech"><h2>Locations</h2><a id="mapLink" href="#" target="_blank" rel="noopener">Directions →</a></div>
     <div class="card"><div class="k">Venue</div><div style="font-family:var(--display);font-weight:var(--dw);font-size:calc(28px * var(--ds));margin-top:4px" id="venueName"></div><div class="note" id="venueAddr" style="font-size:14px"></div></div>
@@ -561,6 +570,8 @@ const CONFIG = {
   groups: ['Next Level', 'Level Up', 'House of Praise', 'Guest / other church'],
   fullPrice: 180, earlyPrice: 150, earlyBirdEnds: '2027-02-28',
   depositAmount: 50, monthlyCount: 4, finalDeadline: 'by July 2027',
+  roomsReleased: true,                 // false until rooms are allocated; true shows the My room lookup
+  roomsFrom: 'early August',           // shown while rooms are still being allocated
   chatLink: '',                       // WhatsApp / group chat invite link
   sos: 'Find a team member in a lanyard, or go to the Welcome desk. Emergencies: call 999, then the duty leader on 07700 900000.'
 };
@@ -625,7 +636,8 @@ const FAQ = [
   ['Can I pay in instalments?', 'Yes. Pay a deposit now, then the rest in monthly bank transfers. The Pay tab shows exactly how much and when.'],
   ['How do I pay?', 'By bank transfer straight to the community account. Always use your Recharge reference so we can match it to you.'],
   ['What’s included?', 'Your bed for three nights, all meals from Thursday dinner to Sunday lunch, and every session.'],
-  ['How do rooms work?', 'Shared rooms split by gender. Tell us who you’d like to share with when you register.'],
+  ['How do rooms work?', 'Rooms are shared and split by gender, and the team allocates everyone. Once rooms are released you’ll see your house and room under My room, using your reference and surname.'],
+  ['Can I choose who I share with?', 'Not this year. The team allocates rooms so everyone gets to meet new people.'],
   ['Can I arrive late or leave early?', 'Yes, just tell the team in advance so we know you’re safe.'],
   ['What if I can’t come after paying?', 'Message the team. The refund and transfer policy will be shared before payments open.'],
   ['Is there parking?', 'Details will be shared with the venue address.']
@@ -807,7 +819,7 @@ form.addEventListener('submit', async e => {
   $('#nextBtn').textContent = 'Saving…'; $('#nextBtn').disabled = true;
   try {
     if (CONFIG.sheetUrl) await fetch(CONFIG.sheetUrl, {method: 'POST', mode: 'no-cors', body: data});
-    store.set('ref', ref); store.set('email', data.get('Email')); store.set('name', data.get('First name') + ' ' + data.get('Last name'));
+    store.set('ref', ref); store.set('email', data.get('Email')); store.set('name', data.get('First name') + ' ' + data.get('Last name')); store.set('last', data.get('Last name'));
     showDone();
     $('#previewNote').hidden = !!CONFIG.sheetUrl;
   } catch { $('#formErr').textContent = 'That didn’t send. Check your connection and try again.'; }
@@ -927,6 +939,44 @@ $('#skipLink').addEventListener('click', () => { try { sessionStorage.removeItem
 $('#backLink').addEventListener('click', () => { try { sessionStorage.removeItem('rt-fromPrep'); } catch {} });
 function tickWelcome() { $('#wCd').innerHTML = $('#countdown').innerHTML; $('#wCd').style.display = $('#countdown').style.display; }
 
+
+/* ---------- My room ---------- */
+function roomCard(r) {
+  return `<div class="room"><div class="k">${r.demo ? 'Sample · ' : ''}Your room for ${esc(CONFIG.short)}</div><div class="big">${esc(r.house || 'House to be confirmed')}</div><div class="grid2"><div><small>Room</small><b>${esc(r.room || 'TBC')}</b></div><div><small>Name</small><b>${esc(r.name || store.get('name') || '')}</b></div></div>${r.mates ? `<div class="mates">Sharing with ${esc(r.mates)}</div>` : ''}${r.notes ? `<div class="notes">${esc(r.notes)}</div>` : ''}<div class="row" style="margin-top:16px"><button class="btn" id="roomAgain">Look up again</button><a class="btn" href="#info-places">Site map</a></div></div>`;
+}
+function renderRoom(msg) {
+  const box = $('#roomBox');
+  if (!CONFIG.roomsReleased) {
+    box.innerHTML = `<div class="card"><b>Rooms are being allocated.</b><div class="note">You'll see your house and room here from ${esc(CONFIG.roomsFrom)}. The team allocates everyone, split by gender.</div></div>`;
+    $('#roomTileTxt').textContent = 'Released ' + CONFIG.roomsFrom; return;
+  }
+  const saved = store.get('room');
+  if (saved) { try { const r = JSON.parse(saved); box.innerHTML = roomCard(r); $('#roomTileTxt').textContent = [r.house, r.room].filter(Boolean).join(' · ') || 'Allocated'; return; } catch {} }
+  box.innerHTML = `<div class="card"><b>Find your room</b><div class="note">Enter your Recharge reference and surname.</div><form id="roomForm" novalidate><div class="two"><div><label class="l" for="rRef">Reference</label><input id="rRef" placeholder="RC27-XXXX" autocapitalize="characters" value="${esc(store.get('ref'))}"></div><div><label class="l" for="rLast">Surname</label><input id="rLast" autocomplete="family-name" value="${esc(store.get('last'))}"></div></div><p class="err" id="roomErr" role="alert">${esc(msg || '')}</p><button class="btn pri full" type="submit" id="roomBtn">Show my room</button></form></div>`;
+  $('#roomTileTxt').textContent = 'Rooms are out · tap to see yours';
+}
+document.addEventListener('submit', async e => {
+  if (e.target.id !== 'roomForm') return;
+  e.preventDefault();
+  const ref = $('#rRef').value.trim().toUpperCase().replace(/[^A-Z0-9-]/g, ''), last = $('#rLast').value.trim();
+  if (!ref || !last) { $('#roomErr').textContent = 'Enter both your reference and surname.'; return; }
+  $('#roomBtn').textContent = 'Checking…'; $('#roomBtn').disabled = true;
+  try {
+    let r;
+    if (CONFIG.sheetUrl) {
+      const res = await fetch(CONFIG.sheetUrl + '?action=room&ref=' + encodeURIComponent(ref) + '&last=' + encodeURIComponent(last));
+      r = await res.json();
+      if (!r.found) { renderRoom('We couldn’t find that reference and surname. Check them, or ask the Welcome desk.'); return; }
+      if (!r.room && !r.house) { renderRoom('You’re on the list, but your room hasn’t been allocated yet. Check back soon.'); return; }
+    } else {
+      r = {demo: true, house: 'Cedar House', room: '12', name: (store.get('name') || 'Your name'), mates: 'two others', notes: 'Sample result. Once the sheet is connected, everyone sees their real room here. Collect your key from the Welcome desk.'};
+    }
+    store.set('room', JSON.stringify(r)); renderRoom();
+  } catch { renderRoom('Couldn’t check right now. Make sure you’re online and try again.'); }
+});
+document.addEventListener('click', e => { if (e.target.id === 'roomAgain') { store.set('room', ''); renderRoom(); } });
+renderRoom();
+
 /* routing */
 function route() {
   const h = location.hash.slice(1) || 'welcome';
@@ -938,6 +988,7 @@ function route() {
   document.querySelectorAll('nav.tabs a').forEach(a => a.dataset.v === v ? a.setAttribute('aria-current', 'page') : a.removeAttribute('aria-current'));
   if (v === 'tickets') seg(h === 'tickets-pay');
   if (v === 'prep') renderPrep();
+  if (v === 'info' || v === 'home') renderRoom();
   if (v === 'welcome') tickWelcome();
   let fromPrep = false; try { fromPrep = sessionStorage.getItem('rt-fromPrep') === '1'; } catch {}
   $('#backPill').classList.toggle('on', fromPrep && !['welcome', 'prep', 'home'].includes(v));
