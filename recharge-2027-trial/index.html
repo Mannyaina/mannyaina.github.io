@@ -213,7 +213,7 @@ input::placeholder,textarea::placeholder{color:#6d6a77}
 .note{font-size:13px;color:var(--muted)}
 /* tab bar */
 nav.tabs{position:fixed;left:0;right:0;bottom:0;z-index:30;background:rgba(15,15,20,.92);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-top:1px solid var(--line);padding:8px 8px calc(env(safe-area-inset-bottom) + 8px)}
-nav.tabs .in{max-width:600px;margin:0 auto;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:4px}
+nav.tabs .in{max-width:600px;margin:0 auto;display:grid;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);gap:4px}
 nav.tabs a{display:flex;flex-direction:column;align-items:center;gap:3px;padding:8px 0;border-radius:14px;text-decoration:none;color:var(--muted);font-size:11px;font-weight:600;min-height:54px}
 nav.tabs svg{width:23px;height:23px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 nav.tabs a[aria-current=page]{color:var(--ink);background:var(--card)}
@@ -294,6 +294,15 @@ body.splash main{padding:0}
 .room .grid2 b{display:block;font-size:20px;margin-top:2px}
 .room .notes{margin-top:12px;color:#d6d1c8;font-size:15px}
 .room .mates{margin-top:12px;font-size:14px;color:var(--muted)}
+.adm{display:flex;flex-direction:column;gap:8px;margin-top:14px}
+.adm label{display:flex;justify-content:space-between;align-items:center;gap:12px;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:12px 14px;cursor:pointer}
+.adm label b{display:block;font-size:15px}.adm label span{font-size:12px;color:var(--muted)}
+.adm input{appearance:none;-webkit-appearance:none;width:52px;height:30px;min-height:0;padding:0;border-radius:999px;background:var(--line);border:0;position:relative;flex:none;cursor:pointer}
+.adm input::after{content:"";position:absolute;left:3px;top:3px;width:24px;height:24px;border-radius:50%;background:#fff;transition:left .2s}
+.adm input:checked{background:var(--ok)}.adm input:checked::after{left:25px}
+.admbar{display:none;white-space:nowrap;position:fixed;left:50%;transform:translateX(-50%);bottom:calc(env(safe-area-inset-bottom) + 84px);z-index:40;background:var(--acc2);color:#1a1205;font-weight:800;font-size:13px;padding:10px 16px;border-radius:999px;box-shadow:0 8px 24px rgba(0,0,0,.4)}
+.admbar.on{display:block}
+.seg.one{grid-template-columns:minmax(0,1fr)}
 @media(max-width:370px){.two,.pack{grid-template-columns:minmax(0,1fr)}.sess{grid-template-columns:52px minmax(0,1fr)}}
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 .hero h1 em,.dayhead h2 em,.sech h2 .acc{font-style:normal}
@@ -333,7 +342,7 @@ body.splash main{padding:0}
   <div class="logo"><img src="data:image/webp;base64,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" alt="Recharge logo"></div>
   <div><div class="t" id="hName"></div><div class="s" id="hSub"></div></div>
   <div class="live" id="hLive"><span class="dot"></span>Live</div>
-  <button class="aa" id="fontBtn" aria-label="Change font">Aa</button>
+  <button class="aa" data-sec="fonts" id="fontBtn" aria-label="Change font">Aa</button>
 </div></header>
 
 <main>
@@ -372,28 +381,28 @@ body.splash main{padding:0}
     <h1 id="heroTitle"></h1>
     <p id="heroTag"></p>
     <div class="meta" id="heroMeta"></div>
-    <div class="cd" id="countdown"></div>
+    <div class="cd" data-sec="countdown" id="countdown"></div>
   </div>
 
-  <div class="sec" id="liveSec">
+  <div class="sec" data-sec="live" id="liveSec">
     <div class="sech"><h2>Right now</h2></div>
     <div id="liveBox"></div>
   </div>
 
   <div class="sec">
     <div class="tiles">
-      <a class="tile prepTile" href="#prep" id="prepTile"><svg><use href="#i-star"/></svg><div style="flex:1"><b>Your checklist</b><span id="prepTileTxt"></span><div class="pbar"><i id="prepTileBar"></i></div></div></a>
-      <a class="tile hot" href="#tickets" id="tReg"><svg><use href="#i-pen"/></svg><div><b>Register</b><span>Free, two minutes</span></div></a>
-      <a class="tile" href="#tickets-pay"><svg><use href="#i-card"/></svg><div><b>Pay</b><span>In full or instalments</span></div></a>
-      <a class="tile" href="#schedule"><svg><use href="#i-cal"/></svg><div><b>Timetable</b><span>Four days, hour by hour</span></div></a>
-      <a class="tile" href="#speakers"><svg><use href="#i-mic"/></svg><div><b>Speakers</b><span>Who's ministering</span></div></a>
-      <a class="tile prepTile" href="#info-room" id="roomTile"><svg><use href="#i-home"/></svg><div style="flex:1"><b>My room</b><span id="roomTileTxt">Find your house and room</span></div></a>
-      <a class="tile" href="#info-places"><svg><use href="#i-pin"/></svg><div><b>Locations</b><span>Find your way around</span></div></a>
-      <a class="tile" href="#info-pack"><svg><use href="#i-bag"/></svg><div><b>What to bring</b><span>Your packing list</span></div></a>
+      <a class="tile prepTile" data-sec="checklist" href="#prep" id="prepTile"><svg><use href="#i-star"/></svg><div style="flex:1"><b>Your checklist</b><span id="prepTileTxt"></span><div class="pbar"><i id="prepTileBar"></i></div></div></a>
+      <a class="tile hot" data-sec="register" href="#tickets" id="tReg"><svg><use href="#i-pen"/></svg><div><b>Register</b><span>Free, two minutes</span></div></a>
+      <a class="tile" data-sec="pay" href="#tickets-pay"><svg><use href="#i-card"/></svg><div><b>Pay</b><span>In full or instalments</span></div></a>
+      <a class="tile" data-sec="timetable" href="#schedule"><svg><use href="#i-cal"/></svg><div><b>Timetable</b><span>Four days, hour by hour</span></div></a>
+      <a class="tile" data-sec="speakers" href="#speakers"><svg><use href="#i-mic"/></svg><div><b>Speakers</b><span>Who's ministering</span></div></a>
+      <a class="tile prepTile" data-sec="room" href="#info-room" id="roomTile"><svg><use href="#i-home"/></svg><div style="flex:1"><b>My room</b><span id="roomTileTxt">Find your house and room</span></div></a>
+      <a class="tile" data-sec="locations" href="#info-places"><svg><use href="#i-pin"/></svg><div><b>Locations</b><span>Find your way around</span></div></a>
+      <a class="tile" data-sec="bring" href="#info-pack"><svg><use href="#i-bag"/></svg><div><b>What to bring</b><span>Your packing list</span></div></a>
     </div>
   </div>
 
-  <div class="sec">
+  <div class="sec" data-sec="updates">
     <div class="sech"><h2>Updates</h2></div>
     <div class="news" id="news"></div>
   </div>
@@ -417,8 +426,8 @@ body.splash main{padding:0}
 <!-- TICKETS -->
 <section class="view wrap" id="v-tickets">
   <div class="seg" role="tablist" aria-label="Tickets">
-    <button role="tab" id="segReg" aria-selected="true">Register</button>
-    <button role="tab" id="segPay" aria-selected="false">Pay</button>
+    <button role="tab" id="segReg" data-sec="register" aria-selected="true">Register</button>
+    <button role="tab" id="segPay" data-sec="pay" aria-selected="false">Pay</button>
   </div>
 
   <div id="regPane">
@@ -510,28 +519,28 @@ body.splash main{padding:0}
       <div><b>Need help on site?</b><div class="note" id="sosText" style="font-size:14px"></div></div>
     </div>
   </div>
-  <div class="sec" id="info-room">
+  <div class="sec" data-sec="room" id="info-room">
     <div class="sech"><h2>My room</h2></div>
     <div id="roomBox"></div>
   </div>
-  <div class="sec" id="info-places">
+  <div class="sec" data-sec="locations" id="info-places">
     <div class="sech"><h2>Locations</h2><a id="mapLink" href="#" target="_blank" rel="noopener">Directions →</a></div>
     <div class="card"><div class="k">Venue</div><div style="font-family:var(--display);font-weight:var(--dw);font-size:calc(28px * var(--ds));margin-top:4px" id="venueName"></div><div class="note" id="venueAddr" style="font-size:14px"></div></div>
     <div class="locs" id="locs" style="margin-top:10px"></div>
   </div>
-  <div class="sec" id="info-faq">
+  <div class="sec" data-sec="faqs" id="info-faq">
     <div class="sech"><h2>FAQs</h2></div>
     <div id="faq"></div>
   </div>
-  <div class="sec" id="info-pack">
+  <div class="sec" data-sec="bring" id="info-pack">
     <div class="sech"><h2>What to bring</h2><span class="note" id="packCount"></span></div>
     <div class="pack" id="pack"></div>
   </div>
-  <div class="sec" id="info-rules">
+  <div class="sec" data-sec="rules" id="info-rules">
     <div class="sech"><h2>House rules</h2></div>
     <div class="card"><ul id="rules" style="margin:0;padding-left:18px;color:#d6d1c8;display:flex;flex-direction:column;gap:6px"></ul></div>
   </div>
-  <div class="sec">
+  <div class="sec" data-sec="livePreview">
     <div class="card demo">
       <div><b>Preview live mode</b><div class="note">See what the app looks like during the retreat.</div></div>
       <button class="switch" role="switch" aria-checked="false" id="demoSw" aria-label="Preview live mode"></button>
@@ -539,14 +548,15 @@ body.splash main{padding:0}
   </div>
 </section>
 </main>
+<button class="admbar" id="admBar">Organiser preview · edit</button>
 
 <div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="shTitle"><div class="in" id="sheetIn"></div></div>
 
 <nav class="tabs" aria-label="App"><div class="in">
   <a href="#home" data-v="home"><svg><use href="#i-home"/></svg>Home</a>
-  <a href="#schedule" data-v="schedule"><svg><use href="#i-cal"/></svg>Timetable</a>
-  <a href="#speakers" data-v="speakers"><svg><use href="#i-mic"/></svg>Speakers</a>
-  <a href="#tickets" data-v="tickets"><svg><use href="#i-ticket"/></svg>Tickets</a>
+  <a href="#schedule" data-v="schedule" data-sec="timetable"><svg><use href="#i-cal"/></svg>Timetable</a>
+  <a href="#speakers" data-v="speakers" data-sec="speakers"><svg><use href="#i-mic"/></svg>Speakers</a>
+  <a href="#tickets" data-v="tickets" data-sec="tickets"><svg><use href="#i-ticket"/></svg>Tickets</a>
   <a href="#info" data-v="info"><svg><use href="#i-info"/></svg>Info</a>
 </div></nav>
 
@@ -572,6 +582,26 @@ const CONFIG = {
   depositAmount: 50, monthlyCount: 4, finalDeadline: 'by July 2027',
   roomsReleased: true,                 // false until rooms are allocated; true shows the My room lookup
   roomsFrom: 'early August',           // shown while rooms are still being allocated
+  /* SECTIONS: true = show, false = hide. If the sheet is connected, the "App settings" tab overrides these. */
+  show: {
+    welcome: true,     // welcome screen with Enter the camp
+    checklist: true,   // Get camp-ready checklist
+    countdown: true,   // countdown timers
+    register: true,    // registration form
+    pay: true,         // payments
+    timetable: true,   // timetable tab
+    live: true,        // Right now / Up next on home
+    speakers: true,    // speakers tab
+    room: true,        // My room
+    locations: true,   // venue and site locations
+    bring: true,       // what to bring / packing list
+    faqs: true,        // FAQs
+    rules: true,       // house rules
+    chat: true,        // group chat step
+    updates: true,     // updates on home
+    fonts: false,      // the Aa font button (organisers only)
+    livePreview: false // the Preview live mode switch
+  },
   chatLink: '',                       // WhatsApp / group chat invite link
   sos: 'Find a team member in a lanyard, or go to the Welcome desk. Emergencies: call 999, then the duty leader on 07700 900000.'
 };
@@ -913,13 +943,13 @@ const PREP = [
    body: () => `<b>${esc(CONFIG.venue)}</b><br>${esc(CONFIG.address)}<br>Arrival from ${fmt12(DAYS[0].s[0][0])} on ${dayDate(0).toLocaleDateString('en-GB', {weekday: 'long', day: 'numeric', month: 'long'})}.<div class="row">${CONFIG.mapsQuery ? `<a class="btn" target="_blank" rel="noopener" href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(CONFIG.mapsQuery)}">Directions</a>` : ''}<a class="btn" href="#info-places">Site locations</a><button class="btn pri" data-mark="travel">${store.get('travel') ? 'Undo' : 'Got it'}</button></div>`}
 ];
 let openStep = null;
-function prepDone() { return PREP.filter(p => p.done()).length; }
+function prepDone() { return activePrep().filter(p => p.done()).length; }
 function renderPrep() {
-  const n = prepDone(), t = PREP.length, pct = n / t;
+  const list = activePrep(); const n = prepDone(), t = list.length || 1, pct = n / t;
   const C = 2 * Math.PI * 30;
   $('#prog').innerHTML = `<svg viewBox="0 0 74 74" role="img" aria-label="${n} of ${t} done"><circle cx="37" cy="37" r="30" fill="none" stroke="var(--line)" stroke-width="8"/><circle cx="37" cy="37" r="30" fill="none" stroke="var(--ok)" stroke-width="8" stroke-linecap="round" stroke-dasharray="${C * pct} ${C}" transform="rotate(-90 37 37)"/><text x="37" y="43" text-anchor="middle" fill="var(--ink)" font-family="Inter" font-weight="800" font-size="17">${n}/${t}</text></svg><div><b>${n === t ? 'You’re camp-ready!' : n === 0 ? 'Let’s get you sorted' : 'Nice, keep going'}</b><div class="note">${n === t ? 'Everything’s done. See you there.' : (t - n) + ' thing' + (t - n === 1 ? '' : 's') + ' left to do'}</div></div>`;
-  if (openStep === null) openStep = (PREP.find(p => !p.done()) || {}).id || null;
-  $('#steplist').innerHTML = PREP.map((p, i) => `<div class="st ${p.done() ? 'done' : ''}" data-open="${openStep === p.id}"><button aria-expanded="${openStep === p.id}" data-step="${p.id}"><span class="num">${p.done() ? '<svg viewBox="0 0 24 24"><path d="M5 12l5 5 9-10"/></svg>' : i + 1}</span><div><h3>${p.title}</h3><div class="sub">${esc(p.sub())}</div></div><span class="chev">›</span></button><div class="body">${p.body()}</div></div>`).join('');
+  if (openStep === null) openStep = (list.find(p => !p.done()) || {}).id || null;
+  $('#steplist').innerHTML = list.map((p, i) => `<div class="st ${p.done() ? 'done' : ''}" data-open="${openStep === p.id}"><button aria-expanded="${openStep === p.id}" data-step="${p.id}"><span class="num">${p.done() ? '<svg viewBox="0 0 24 24"><path d="M5 12l5 5 9-10"/></svg>' : i + 1}</span><div><h3>${p.title}</h3><div class="sub">${esc(p.sub())}</div></div><span class="chev">›</span></button><div class="body">${p.body()}</div></div>`).join('');
   $('#toApp').textContent = n === t ? 'Enter camp' : 'Continue to camp';
   $('#skipLink').hidden = n === t;
   $('#prepTileTxt').textContent = n === t ? 'All done, you’re camp-ready' : `${n} of ${t} done · tap to finish`;
@@ -933,7 +963,7 @@ $('#steplist').addEventListener('click', e => {
   const b = e.target.closest('[data-step]'); if (b) { openStep = openStep === b.dataset.step ? '' : b.dataset.step; renderPrep(); }
   const a = e.target.closest('a[href^="#"]'); if (a) { try { sessionStorage.setItem('rt-fromPrep', '1'); } catch {} }
 });
-$('#enterBtn').addEventListener('click', () => { location.hash = prepDone() === PREP.length ? 'home' : 'prep'; });
+$('#enterBtn').addEventListener('click', () => { location.hash = (on('checklist') && prepDone() < activePrep().length) ? 'prep' : 'home'; });
 $('#toApp').addEventListener('click', () => { try { sessionStorage.removeItem('rt-fromPrep'); } catch {} location.hash = 'home'; });
 $('#skipLink').addEventListener('click', () => { try { sessionStorage.removeItem('rt-fromPrep'); } catch {} });
 $('#backLink').addEventListener('click', () => { try { sessionStorage.removeItem('rt-fromPrep'); } catch {} });
@@ -977,16 +1007,91 @@ document.addEventListener('submit', async e => {
 document.addEventListener('click', e => { if (e.target.id === 'roomAgain') { store.set('room', ''); renderRoom(); } });
 renderRoom();
 
+
+/* ---------- section switches ---------- */
+const SECTIONS = [
+  ['welcome', 'Welcome screen', 'The Enter the camp screen people see first'],
+  ['checklist', 'Camp-ready checklist', 'The pre-event checklist and its home tile'],
+  ['countdown', 'Countdown', 'Days, hours, minutes to go'],
+  ['register', 'Registration', 'The sign-up form, tile and checklist step'],
+  ['pay', 'Payments', 'Pay tab, tile and checklist step'],
+  ['timetable', 'Timetable', 'The day-by-day timetable tab'],
+  ['live', 'Right now / up next', 'The live cards on the home screen'],
+  ['speakers', 'Speakers', 'The speakers tab and tile'],
+  ['room', 'My room', 'Room and house lookup'],
+  ['locations', 'Locations', 'Venue, directions and site map, plus the checklist step'],
+  ['bring', 'What to bring', 'Packing list, tile and checklist step'],
+  ['faqs', 'FAQs', 'Questions and answers'],
+  ['rules', 'House rules', 'Rules list and checklist step'],
+  ['chat', 'Group chat', 'The Join the group chat checklist step'],
+  ['updates', 'Updates', 'News cards on the home screen'],
+  ['fonts', 'Font button', 'The Aa button in the top bar'],
+  ['livePreview', 'Preview live mode', 'The test switch at the bottom of Info']
+];
+let SHOW = Object.assign({}, CONFIG.show);
+try { const c = JSON.parse(localStorage.getItem('rt-settings') || 'null'); if (c) Object.assign(SHOW, c); } catch {}
+let PREVIEW = null;
+try { const pv = JSON.parse(localStorage.getItem('rt-preview') || 'null'); if (pv) PREVIEW = pv; } catch {}
+const on = k => (PREVIEW && k in PREVIEW ? PREVIEW[k] : SHOW[k]) !== false;
+const STEP_SEC = {reg: 'register', pay: 'pay', pack: 'bring', rules: 'rules', chat: 'chat', travel: 'locations'};
+function applySections() {
+  document.querySelectorAll('[data-sec]').forEach(el => {
+    const k = el.dataset.sec;
+    const vis = k === 'tickets' ? (on('register') || on('pay')) : on(k);
+    el.hidden = !vis;
+  });
+  $('.seg').classList.toggle('one', !(on('register') && on('pay')));
+  $('#welcome') ; $('#admBar').classList.toggle('on', !!PREVIEW);
+  if (typeof renderPrep === 'function') renderPrep();
+}
+const activePrep = () => PREP.filter(p => on(STEP_SEC[p.id] || p.id));
+function viewAllowed(v, h) {
+  if (v === 'welcome') return on('welcome');
+  if (v === 'prep') return on('checklist');
+  if (v === 'schedule') return on('timetable');
+  if (v === 'speakers') return on('speakers');
+  if (v === 'tickets') return h === 'tickets-pay' ? on('pay') : (on('register') || on('pay'));
+  return true;
+}
+function startView() { return on('welcome') ? 'welcome' : on('checklist') && prepDone() < activePrep().length ? 'prep' : 'home'; }
+async function loadSettings() {
+  if (!CONFIG.sheetUrl) return;
+  try {
+    const r = await (await fetch(CONFIG.sheetUrl + '?action=settings')).json();
+    if (r && r.show) { SHOW = Object.assign({}, CONFIG.show, r.show); try { localStorage.setItem('rt-settings', JSON.stringify(r.show)); } catch {} applySections(); route(); }
+  } catch {}
+}
+function openAdmin() {
+  const cur = k => on(k);
+  openSheet(`<div class="k">Organiser preview</div><h3 id="shTitle" style="margin-top:6px">Show or hide sections</h3><p class="note">Flip a switch to see the app without that section. This only changes <b>your phone</b>. To change it for everyone, tick the same boxes in the <b>App settings</b> tab of the Google Sheet${CONFIG.sheetUrl ? '' : ', or the show list in the settings at the top of the file'}.</p><div class="adm">${SECTIONS.map(([k, n, d]) => `<label><div><b>${n}</b><span>${d}</span></div><input type="checkbox" data-adm="${k}" ${cur(k) ? 'checked' : ''} aria-label="${n}"></label>`).join('')}</div><div class="row" style="margin-top:16px"><button class="btn full" id="admReset">Back to the live settings</button><button class="btn pri full" data-close>Done</button></div>`);
+}
+document.addEventListener('change', e => {
+  const k = e.target.dataset && e.target.dataset.adm; if (!k) return;
+  PREVIEW = Object.assign({}, PREVIEW || {}, {[k]: e.target.checked});
+  try { localStorage.setItem('rt-preview', JSON.stringify(PREVIEW)); } catch {}
+  applySections();
+});
+document.addEventListener('click', e => {
+  if (e.target.id === 'admReset') { PREVIEW = null; try { localStorage.removeItem('rt-preview'); } catch {} applySections(); closeSheet(); route(); }
+  if (e.target.id === 'admBar') openAdmin();
+});
+/* organisers: tap the logo in the top bar 5 times, or open the link with #organiser */
+let taps = 0, tapT = 0;
+document.querySelector('header .logo').addEventListener('click', () => { taps++; clearTimeout(tapT); tapT = setTimeout(() => taps = 0, 1200); if (taps >= 5) { taps = 0; openAdmin(); } });
+
 /* routing */
 function route() {
-  const h = location.hash.slice(1) || 'welcome';
+  if (location.hash === '#organiser') { history.replaceState(null, '', '#home'); setTimeout(openAdmin, 50); }
+  const h0 = location.hash.slice(1) || startView();
+  const h = h0 === 'organiser' ? 'home' : h0;
   const base = h.split('-')[0];
-  const v = ['welcome', 'prep', 'home', 'schedule', 'speakers', 'tickets', 'info'].includes(base) ? base : 'home';
+  let v = ['welcome', 'prep', 'home', 'schedule', 'speakers', 'tickets', 'info'].includes(base) ? base : 'home';
+  if (!viewAllowed(v, h)) v = 'home';
   document.body.classList.toggle('splash', v === 'welcome');
   document.body.classList.toggle('prep', v === 'prep');
   document.querySelectorAll('.view').forEach(s => s.classList.toggle('on', s.id === 'v-' + v));
   document.querySelectorAll('nav.tabs a').forEach(a => a.dataset.v === v ? a.setAttribute('aria-current', 'page') : a.removeAttribute('aria-current'));
-  if (v === 'tickets') seg(h === 'tickets-pay');
+  if (v === 'tickets') seg(on('register') ? (h === 'tickets-pay' && on('pay')) : true);
   if (v === 'prep') renderPrep();
   if (v === 'info' || v === 'home') renderRoom();
   if (v === 'welcome') tickWelcome();
@@ -1022,7 +1127,7 @@ window.addEventListener('scroll', () => { if (!ticking) { ticking = true; reques
 window.addEventListener('hashchange', () => { hideBy = 0; paintBar(true); });
 dayBar.addEventListener('click', () => { hideBy = 0; paintBar(true); });
 window.addEventListener('hashchange', route);
-showStep(); refresh(); renderPrep(); route();
+showStep(); refresh(); applySections(); route(); loadSettings();
 setInterval(() => { tickCountdown(); if (document.body.classList.contains('splash')) tickWelcome(); }, 1000);
 setInterval(() => { renderLive(); if ($('#v-schedule').classList.contains('on')) { const open = [...document.querySelectorAll('.sbox[aria-expanded=true]')].map(b => b.dataset.s); renderSchedule(); open.forEach(id => document.querySelector(`.sbox[data-s="${id}"]`)?.setAttribute('aria-expanded', 'true')); } }, 30000);
 }
