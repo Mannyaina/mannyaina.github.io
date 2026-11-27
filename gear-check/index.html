@@ -8,11 +8,11 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
-<meta name="apple-mobile-web-app-title" content="Gear Check">
+<meta name="apple-mobile-web-app-title" content="AS Gear Check">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="icon" href="icon-192.png">
-<title>Gear Check</title>
+<title>Aina Studios Gear Check</title>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@800&family=Inter:wght@400;600&display=swap" rel="stylesheet">
 <style>
 :root{--bg:#f6f4ef;--card:#fff;--ink:#141414;--mute:#66625a;--line:#e2ddd2;--out:#ff5a1f;--outbg:#fff0e8;--in:#0f8a4a;--inbg:#e6f6ec;--rep:#c62828;--repbg:#fdeaea}
@@ -60,6 +60,11 @@ li.it{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:2px 10px;padding
 .nm{font-weight:600}.sub{font-size:13px;color:var(--mute);grid-column:1/-1}
 .pill{font-size:12px;font-weight:700;padding:4px 10px;border-radius:12px;white-space:nowrap;align-self:start}
 .pill.In{background:var(--inbg);color:var(--in)}.pill.Out{background:var(--outbg);color:var(--out)}.pill.Repair{background:var(--repbg);color:var(--rep)}
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-bottom:12px}.stat{background:var(--bg);border-radius:10px;padding:10px 8px;text-align:center}.stat b{display:block;font-family:Archivo,sans-serif;font-size:24px;line-height:1.1}.stat span{font-size:12px;color:var(--mute)}.stat.o b{color:var(--out)}.stat.i b{color:var(--in)}.stat.r b{color:var(--rep)}
+.unit{font-size:11px;font-weight:700;color:var(--mute);border:1px solid var(--line);border-radius:6px;padding:1px 6px;margin-left:6px;vertical-align:1px;white-space:nowrap}
+.ghead{display:flex;justify-content:space-between;align-items:baseline;gap:8px;padding:12px 4px 2px;font-weight:700}.ghead small{font-size:13px;color:var(--mute);font-weight:600;white-space:nowrap}.ghead small b{color:var(--in)}
+li.it.sub2{padding-left:14px}
+.who{font-weight:600;color:var(--ink)}
 .grp{font-size:13px;font-weight:700;color:var(--mute);margin:14px 0 2px}
 .empty{color:var(--mute);padding:20px 4px}
 h2{font-size:20px;margin:0 0 10px}
@@ -73,10 +78,26 @@ dialog::backdrop{background:rgba(0,0,0,.45)}
 #toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:10px;font-size:14px;opacity:0;pointer-events:none;transition:opacity .2s;max-width:90vw}
 #toast.on{opacity:1}
 [hidden]{display:none!important}
+.asrow{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:12px;padding-bottom:12px;border-bottom:1px solid var(--line)}
+.asrow span{font-size:13px;font-weight:600;color:var(--mute)}
+#asbtn{height:40px;padding:0 14px;border-radius:20px;border:1.5px solid var(--ink);background:var(--ink);color:var(--bg);font-weight:700;max-width:60%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.names{display:grid;gap:6px;margin-top:10px}
+.names button{height:48px;border-radius:10px;border:1.5px solid var(--line);background:var(--bg);font-weight:600;text-align:left;padding:0 14px}
+.names button[aria-pressed=true]{border-color:var(--ink);background:var(--ink);color:var(--bg)}
+.addname{display:flex;gap:6px;margin-top:10px}.addname input{flex:1}
+#cambtn{width:100%;height:52px;margin-top:10px;border-radius:10px;border:0;background:var(--out);color:#fff;font-weight:700;font-size:17px}
+#cam{position:fixed;inset:0;z-index:50;background:#000;display:flex;flex-direction:column}
+#cam video{flex:1;width:100%;object-fit:cover;min-height:0}
+#camguide{position:absolute;left:50%;top:42%;width:min(64vw,300px);aspect-ratio:1;transform:translate(-50%,-50%);border:3px solid rgba(255,255,255,.9);border-radius:18px;box-shadow:0 0 0 100vmax rgba(0,0,0,.35)}
+#cambar{background:#141414;color:#f6f4ef;padding:14px 16px calc(14px + env(safe-area-inset-bottom));display:grid;gap:10px}
+#camres{min-height:52px;display:flex;align-items:center;gap:12px}
+#camres b{font-family:Archivo,sans-serif;font-size:26px}
+#camres.Out b{color:#ff8a5c}#camres.In b{color:#3ccf7e}#camres.Repair b,#camres.warn b{color:#ff6b6b}
+#camclose{height:48px;border-radius:10px;border:1.5px solid #f6f4ef;background:transparent;color:#f6f4ef;font-weight:700}
 </style>
 </head>
 <body>
-<header><h1>Gear Check</h1><span id="sync" class="wait"><i></i><span id="synctxt">Loading</span></span></header>
+<header><h1>Aina Studios Gear Check</h1><span id="sync" class="wait"><i></i><span id="synctxt">Loading</span></span></header>
 
 <section id="login" hidden>
  <div class="card">
@@ -91,6 +112,7 @@ dialog::backdrop{background:rgba(0,0,0,.45)}
 <main id="app" hidden>
 <section>
  <div class="card">
+  <div class="asrow"><span>Scanning as</span><button id="asbtn" type="button">Choose name</button></div>
   <label for="job">Job / client</label>
   <input type="text" id="job" placeholder="Smith wedding, Birmingham" autocomplete="off">
   <div class="modes" role="group" aria-label="Scan mode">
@@ -105,7 +127,8 @@ dialog::backdrop{background:rgba(0,0,0,.45)}
   <label for="scan">Scan a label</label>
   <input type="text" id="scan" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="Scan or type ID">
   <div class="ready"><span id="readytxt">Ready to scan</span><button class="link" id="focusbtn" type="button">Tap to scan</button></div>
-  <div id="result"><div class="meta">Scan a QR code or barcode. The last item shows here.</div></div>
+  <button id="cambtn" type="button">Scan with camera</button>
+  <div id="result"><div class="meta">Scan with the barcode scanner or your camera. The last item shows here.</div></div>
  </div>
  <div class="card" id="jobbox" style="margin-top:16px" hidden>
   <h2 id="jobtitle"></h2>
@@ -117,10 +140,12 @@ dialog::backdrop{background:rgba(0,0,0,.45)}
 <section class="card">
  <div class="tabs" role="group" aria-label="View">
   <button data-tab="out" aria-pressed="true">Out now</button>
+  <button data-tab="in" aria-pressed="false">In</button>
   <button data-tab="all" aria-pressed="false">All gear</button>
   <button data-tab="hist" aria-pressed="false">History</button>
  </div>
  <input type="text" id="search" placeholder="Search name or ID" autocomplete="off" style="height:44px;margin-bottom:10px">
+ <div id="stats" class="stats"></div>
  <ul id="list"></ul>
  <div class="row2"><button class="btn" id="refresh" type="button">Refresh</button><button class="link" id="signout" type="button">Sign out</button></div>
 </section>
@@ -144,6 +169,17 @@ dialog::backdrop{background:rgba(0,0,0,.45)}
   <button class="btn" id="addcancel" type="button">Cancel</button>
  </div>
 </dialog>
+<dialog id="asdlg">
+ <div class="big">Who's scanning?</div><div class="meta">Scans are recorded under this name.</div>
+ <div class="names" id="namelist"></div>
+ <div class="addname"><input type="text" id="newname" placeholder="Add a name" autocomplete="off"><button class="btn solid" id="addnamebtn" type="button">Add</button></div>
+ <div class="sheet"><button class="btn" id="asclose" type="button">Done</button></div>
+</dialog>
+<div id="cam" hidden>
+ <video id="camvid" playsinline muted></video>
+ <div id="camguide"></div>
+ <div id="cambar"><div id="camres"><span>Point the camera at a QR label</span></div><button id="camclose" type="button">Done scanning</button></div>
+</div>
 <div id="toast" role="status"></div>
 
 <script>
@@ -160,7 +196,23 @@ function toast(t){ const el=$('#toast'); el.textContent=t; el.classList.add('on'
 function beep(ok){ try{ const a=beep.a||(beep.a=new (window.AudioContext||window.webkitAudioContext)()); const o=a.createOscillator(),g=a.createGain(); o.frequency.value=ok?880:220; g.gain.value=.08; o.connect(g); g.connect(a.destination); o.start(); o.stop(a.currentTime+(ok?.12:.35)); }catch(e){} try{ navigator.vibrate && navigator.vibrate(ok?40:[80,60,80]); }catch(e){} }
 function setSync(cls, t){ $('#sync').className=cls; $('#synctxt').textContent=t; }
 
+const DEMO = API === 'DEMO';
+const DEMO_CAT = [["AS-CAM-001", "FX30 Camera #1", "Camera"], ["AS-CAM-002", "FX30 Camera #2", "Camera"], ["AS-CAM-003", "EOS R6 Mark II", "Camera"], ["AS-LEN-001", "Canon 70-200mm", "Lens"], ["AS-LEN-002", "Tamron 70-300mm", "Lens"], ["AS-LEN-003", "Tamron 28-75mm G2", "Lens"], ["AS-BAT-001", "V-Mount 99Wh", "Battery"], ["AS-BAT-002", "V-Mount Battery", "Battery"], ["AS-BAT-003", "V-Mount Battery #1", "Battery"], ["AS-BAT-004", "V-Mount Battery #2", "Battery"], ["AS-BAT-005", "V-Mount Battery #3", "Battery"], ["AS-BAT-006", "NP-FZ100 #1", "Battery"], ["AS-BAT-007", "NP-FZ100 #2", "Battery"], ["AS-BAT-008", "NP-FZ100 #3", "Battery"], ["AS-BAT-009", "NP-FZ100 #4", "Battery"], ["AS-PWR-001", "Dummy Batt D-Tap #1", "Power"], ["AS-PWR-002", "Dummy Batt D-Tap #2", "Power"], ["AS-PWR-003", "Dummy Batt D-Tap #3", "Power"], ["AS-PWR-004", "Dummy Batt D-Tap #4", "Power"], ["AS-PWR-005", "Dummy Batt D-Tap #5", "Power"], ["AS-PWR-006", "V-Mount Plate #1", "Power"], ["AS-PWR-007", "V-Mount Plate #2", "Power"], ["AS-PWR-008", "V-Mount Plate #3", "Power"], ["AS-PWR-009", "V-Mount Plate #4", "Power"], ["AS-PWR-010", "V-Mount Plate #5", "Power"], ["AS-PWR-011", "8-Bay Charger", "Power"], ["AS-SUP-001", "Side Handle #1", "Support"], ["AS-SUP-002", "Side Handle #2", "Support"], ["AS-SUP-003", "Top Handle", "Support"], ["AS-SUP-004", "Crab Clamp", "Support"], ["AS-SUP-005", "Swivel Mount 1/4\"", "Support"], ["AS-SUP-006", "Cold Shoe Mount #1", "Support"], ["AS-SUP-007", "Cold Shoe Mount #2", "Support"], ["AS-SUP-008", "Cold Shoe Mount #3", "Support"], ["AS-AUD-001", "DJI Mic Kit", "Audio"], ["AS-AUD-002", "DJI Mic TX1", "Audio"], ["AS-AUD-003", "DJI Mic TX2", "Audio"], ["AS-AUD-004", "DJI Mic RX", "Audio"], ["AS-VID-001", "HDMI-SDI Converter #1", "Video"], ["AS-VID-002", "HDMI-SDI Converter #2", "Video"], ["AS-CBL-001", "HDMI-Micro HDMI", "Cable"], ["AS-CBL-002", "HDMI Cable #2", "Cable"], ["AS-CBL-003", "HDMI Cable #3", "Cable"], ["AS-CBL-004", "HDMI Cable #4", "Cable"], ["AS-CBL-005", "HDMI Cable #5", "Cable"], ["AS-CBL-006", "HDMI Cable #6", "Cable"], ["AS-CBL-007", "HDMI Cable #7", "Cable"], ["AS-CBL-008", "HDMI 8K Cable", "Cable"], ["AS-MED-001", "WD 5TB Drive", "Media"], ["AS-TLS-001", "Multi-Tool #1", "Tools"], ["AS-TLS-002", "Multi-Tool #2", "Tools"]];
+const demoLog = [];
+(function(){ const now=Date.now(), h=3600e3;
+  const seed=[['AS-CAM-001','Out','Okafor wedding, Coventry','Tobi',-26],['AS-LEN-003','Out','Okafor wedding, Coventry','Tobi',-26],['AS-BAT-003','Out','Okafor wedding, Coventry','Tobi',-25.9],['AS-BAT-004','Out','Okafor wedding, Coventry','Tobi',-25.9],['AS-PWR-006','Out','Okafor wedding, Coventry','Tobi',-25.8],['AS-AUD-001','Out','Okafor wedding, Coventry','Kemi',-25.5],['AS-CAM-002','Out','UoB graduation','Manny',-5],['AS-LEN-002','Out','UoB graduation','Manny',-5],['AS-BAT-006','Out','UoB graduation','Manny',-4.9],['AS-BAT-007','Out','UoB graduation','Manny',-4.9],['AS-SUP-001','Out','UoB graduation','Manny',-4.8],['AS-BAT-002','Repair','','Kemi',-50],['AS-CAM-003','Out','Okafor wedding, Coventry','Kemi',-26],['AS-CAM-003','In','Okafor wedding, Coventry','Kemi',-2]];
+  seed.forEach(([id,a,j,b,t])=>demoLog.push({at:new Date(now+t*h).toISOString(),id,action:a,job:j,note:'Scanned by '+b}));
+  demoLog.sort((x,y)=>x.at.localeCompare(y.at));
+})();
+function demoState(){ const s={}; demoLog.forEach(l=>{ s[l.id]={status:l.action,job:l.action==='In'&&s[l.id]?s[l.id].job:l.job,at:l.at,by:l.note.replace('Scanned by ','')}; });
+  return {ok:true,items:DEMO_CAT.map(([id,name,cat])=>Object.assign({id,name,cat},s[id]||{status:'In',job:'',at:'',by:''})),recent:demoLog.slice(-60).reverse()}; }
+async function demoApi(p){ await new Promise(r=>setTimeout(r,250));
+  if(p.action==='scan'){ const cur=demoState().items.find(i=>i.id===p.id); const a=p.mode; demoLog.push({at:p.at||new Date().toISOString(),id:p.id,action:a,job:a==='Out'?(p.job||'No job name'):(cur?.job||p.job||''),note:'Scanned by '+p.by}); return {ok:true}; }
+  if(p.action==='add'){ DEMO_CAT.push([p.id,p.name,p.cat]); return {ok:true}; }
+  return demoState(); }
+
 async function api(params){
+  if (DEMO) return demoApi(params);
   const u = new URL(API); Object.entries({...params, pin: pin()}).forEach(([k,v]) => u.searchParams.set(k, v));
   const ctl = new AbortController(); const tm = setTimeout(() => ctl.abort(), 20000);
   try { const r = await fetch(u, {signal: ctl.signal, redirect: 'follow'}); return await r.json(); }
@@ -170,6 +222,7 @@ async function api(params){
 /* ---------- sign in ---------- */
 async function start(){
   $('#job').value = ls('job') || '';
+  addCrew(who()); showWho();
   $('#login').hidden = true; $('#app').hidden = false;
   render(); refocus(); await load(); flush();
 }
@@ -217,7 +270,7 @@ $('#refresh').onclick = () => { load(); refocus(); };
 
 /* ---------- scanning ---------- */
 const scan = $('#scan');
-const typing = () => ['job','search','addname','addcat','pin','who'].includes(document.activeElement?.id) || $('#dlg').open || $('#adddlg').open;
+const typing = () => ['job','search','addname','addcat','pin','who','newname'].includes(document.activeElement?.id) || $('#dlg').open || $('#adddlg').open || $('#asdlg').open || !$('#cam').hidden;
 function refocus(){ if (!typing() && !$('#app').hidden) scan.focus({preventScroll:true}); }
 scan.addEventListener('keydown', e => { if (e.key==='Enter' || e.key==='Tab'){ e.preventDefault(); const v=scan.value.trim().toUpperCase().replace(/\s+/g,''); scan.value=''; if (v) handle(v); } });
 scan.addEventListener('blur', () => { $('#readytxt').textContent='Tap the scan box before scanning'; setTimeout(refocus, 400); });
@@ -238,10 +291,11 @@ document.querySelectorAll('.modes button').forEach(b => b.onclick = () => {
   scan.focus();
 });
 
-function handle(id){
+function handle(id, fromCam){
   const now = Date.now();
-  if (id===lastScan.id && now-lastScan.t<3000) return;
+  if (!fromCam && id===lastScan.id && now-lastScan.t<3000) return;
   lastScan = {id, t:now};
+  if (!who()) { toast('Choose who is scanning first'); $('#asbtn').click(); return; }
   const it = gear.get(id);
   if (!it) { warn(id); return; }
   const action = mode==='Auto' ? (it.status==='In' ? 'Out' : 'In') : mode;
@@ -250,7 +304,7 @@ function handle(id){
 function send(id, action){
   const it = gear.get(id); const at = new Date().toISOString();
   const job = action==='Out' ? ($('#job').value.trim() || 'No job name') : (it.job || $('#job').value.trim());
-  Object.assign(it, {status: action, job, at});
+  Object.assign(it, {status: action, job, at, by: who()});
   recent.unshift({at, id, action, job, note: 'Scanned by '+who()});
   show(it, action);
   beep(true); render();
@@ -279,6 +333,60 @@ async function addItem(id){
   send(id, mode==='Auto' ? 'Out' : mode); refocus();
 }
 
+
+/* ---------- scanning as ---------- */
+function crewList(){ try { return JSON.parse(ls('crew') || '[]'); } catch(e){ return []; } }
+function addCrew(n){ n=String(n||'').trim(); if(!n) return; const c=crewList().filter(x=>x.toLowerCase()!==n.toLowerCase()); c.unshift(n); ls('crew', JSON.stringify(c.slice(0,20))); }
+function showWho(){ $('#asbtn').textContent = (who() || 'Choose name') + ' ▾'; }
+function renderNames(){ const w=who(); $('#namelist').innerHTML = crewList().map(n=>`<button type="button" data-n="${esc(n)}" aria-pressed="${n===w}">${esc(n)}</button>`).join(''); }
+$('#asbtn').onclick = () => { renderNames(); $('#newname').value=''; $('#asdlg').showModal(); };
+$('#namelist').addEventListener('click', e => { const b=e.target.closest('button[data-n]'); if(!b) return; ls('who', b.dataset.n); addCrew(b.dataset.n); showWho(); $('#asdlg').close(); toast('Scanning as '+b.dataset.n); refocus(); });
+function addNewName(){ const n=$('#newname').value.trim(); if(!n){ $('#newname').focus(); return; } ls('who', n); addCrew(n); showWho(); $('#asdlg').close(); toast('Scanning as '+n); refocus(); }
+$('#addnamebtn').onclick = addNewName;
+$('#newname').addEventListener('keydown', e => { if(e.key==='Enter'){ e.preventDefault(); addNewName(); } });
+$('#asclose').onclick = () => { $('#asdlg').close(); refocus(); };
+
+/* ---------- camera ---------- */
+let camStream=null, camRun=false, camLast={id:'',t:0}, detector=null, jsQRReady=null;
+const canvas=document.createElement('canvas'), ctx=canvas.getContext('2d',{willReadFrequently:true});
+function loadJsQR(){ if(window.jsQR) return Promise.resolve(); if(jsQRReady) return jsQRReady;
+  jsQRReady=new Promise((ok,bad)=>{ const sc=document.createElement('script'); sc.src='https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js'; sc.onload=ok; sc.onerror=bad; document.head.appendChild(sc); }); return jsQRReady; }
+async function openCam(){
+  $('#cam').hidden=false; $('#camres').className=''; $('#camres').innerHTML='<span>Starting camera…</span>';
+  try{
+    if('BarcodeDetector' in window){ try{ const f=await BarcodeDetector.getSupportedFormats(); if(f.includes('qr_code')) detector=new BarcodeDetector({formats:f.filter(x=>['qr_code','code_128','code_39','ean_13'].includes(x))}); }catch(e){ detector=null; } }
+    if(!detector) await loadJsQR();
+    camStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'environment',width:{ideal:1280},height:{ideal:720}},audio:false});
+    const v=$('#camvid'); v.srcObject=camStream; await v.play();
+    $('#camres').innerHTML='<span>Point the camera at a QR label</span>';
+    camRun=true; camLoop();
+  }catch(e){ $('#camres').className='warn'; $('#camres').innerHTML='<span>Camera not available. Allow camera access for this app in your phone settings, then try again.</span>'; }
+}
+function closeCam(){ camRun=false; if(camStream){ camStream.getTracks().forEach(t=>t.stop()); camStream=null; } $('#cam').hidden=true; refocus(); }
+$('#cambtn').onclick = () => { if(!who()){ $('#asbtn').click(); return; } openCam(); };
+$('#camclose').onclick = closeCam;
+async function camLoop(){
+  if(!camRun) return;
+  const v=$('#camvid');
+  try{
+    if(v.readyState>=2){
+      let code='';
+      if(detector){ const r=await detector.detect(v); if(r.length) code=r[0].rawValue; }
+      else { const w=v.videoWidth, h=v.videoHeight, s=Math.min(1, 800/Math.max(w,h)); canvas.width=w*s|0; canvas.height=h*s|0; ctx.drawImage(v,0,0,canvas.width,canvas.height); const r=window.jsQR(ctx.getImageData(0,0,canvas.width,canvas.height).data,canvas.width,canvas.height,{inversionAttempts:'dontInvert'}); if(r) code=r.data; }
+      code=String(code||'').trim().toUpperCase().replace(/\s+/g,'');
+      const now=Date.now();
+      if(code && (code!==camLast.id || now-camLast.t>10000)){
+        camLast={id:code,t:now};
+        handle(code, true);
+        const it=gear.get(code);
+        if(it){ $('#camres').className=it.status; $('#camres').innerHTML=`<b>${esc(it.status==='Repair'?'Repair':it.status.toUpperCase())}</b><span>${esc(it.name)}<br><small>${esc(code)}</small></span>`; }
+        else { $('#camres').className='warn'; $('#camres').innerHTML=`<b>Unknown</b><span>${esc(code)} isn't on the gear list</span>`; }
+      } else if(code===camLast.id) camLast.t=now;
+    }
+  }catch(e){}
+  setTimeout(camLoop, detector ? 120 : 180);
+}
+
 /* ---------- manual change ---------- */
 let dlgId = null;
 function openItem(id){ const it=gear.get(id); if (!it) return; dlgId=id;
@@ -288,21 +396,42 @@ document.querySelectorAll('#dlg [data-set]').forEach(b => b.onclick = () => { $(
 /* ---------- render ---------- */
 document.querySelectorAll('.tabs button').forEach(b => b.onclick = () => { tab=b.dataset.tab; document.querySelectorAll('.tabs button').forEach(x=>x.setAttribute('aria-pressed', x===b)); render(); });
 $('#search').addEventListener('input', render);
-function row(it){ return `<li class="it" data-id="${esc(it.id)}"><span class="nm">${esc(it.name)}</span><span class="pill ${esc(it.status)}">${esc(it.status)}</span><span class="sub">${esc(it.id)}${it.job?' · '+esc(it.job):''}${it.at?' · '+esc(fmt(it.at)):''}</span></li>`; }
+const base = n => /#\d+\s*$/.test(String(n||'')) ? String(n).replace(/\s*#\d+\s*$/,'').trim() : '\u0001'+n;
+let groups = new Map();
+function buildGroups(){
+  groups = new Map();
+  [...gear.values()].sort((a,b)=>a.id.localeCompare(b.id)).forEach(i=>{ const k=base(i.name); if(!groups.has(k)) groups.set(k,[]); groups.get(k).push(i); });
+}
+function unitTag(it){ const g=groups.get(base(it.name)); if(!g || g.length<2) return ''; return `<span class="unit">${g.indexOf(it)+1}/${g.length}</span>`; }
+function byTxt(it){ return it.by ? ` · <span class="who">${esc(it.by)}</span>` : ''; }
+function row(it, cls){ return `<li class="it${cls?' '+cls:''}" data-id="${esc(it.id)}"><span class="nm">${esc(it.name)}${unitTag(it)}</span><span class="pill ${esc(it.status)}">${esc(it.status)}</span><span class="sub">${esc(it.id)}${it.status!=='In'&&it.job?' · '+esc(it.job):''}${it.status!=='In'?byTxt(it):''}${it.at?' · '+esc(fmt(it.at)):''}</span></li>`; }
 function render(){
+  buildGroups();
   const q=$('#search').value.trim().toLowerCase();
-  const m = it => !q || it.id.toLowerCase().includes(q) || it.name.toLowerCase().includes(q);
+  const m = it => !q || it.id.toLowerCase().includes(q) || it.name.toLowerCase().includes(q) || (it.by||'').toLowerCase().includes(q) || (it.job||'').toLowerCase().includes(q);
   const all=[...gear.values()].sort((a,b)=>a.id.localeCompare(b.id));
+  const n={all:all.length,In:0,Out:0,Repair:0}; all.forEach(i=>n[i.status]=(n[i.status]||0)+1);
+  $('#stats').innerHTML=`<div class="stat"><b>${n.all}</b><span>Total</span></div><div class="stat i"><b>${n.In}</b><span>In</span></div><div class="stat o"><b>${n.Out}</b><span>Out</span></div><div class="stat r"><b>${n.Repair}</b><span>Repair</span></div>`;
   const L=$('#list');
   if (tab==='hist') {
-    const h=recent.filter(e=>!q || e.id.toLowerCase().includes(q) || (gear.get(e.id)?.name||'').toLowerCase().includes(q));
-    L.innerHTML = h.length ? h.map(e=>`<li class="it" data-id="${esc(e.id)}"><span class="nm">${esc(gear.get(e.id)?.name||e.id)}</span><span class="pill ${esc(e.action)}">${esc(e.action)}</span><span class="sub">${esc(fmt(e.at))} · ${esc(e.id)}${e.job?' · '+esc(e.job):''}${e.note?' · '+esc(e.note.replace('Scanned by ','')):''}</span></li>`).join('') : '<li class="empty">No scans yet.</li>';
+    const h=recent.filter(e=>!q || e.id.toLowerCase().includes(q) || (gear.get(e.id)?.name||'').toLowerCase().includes(q) || (e.note||'').toLowerCase().includes(q));
+    L.innerHTML = h.length ? h.map(e=>`<li class="it" data-id="${esc(e.id)}"><span class="nm">${esc(gear.get(e.id)?.name||e.id)}</span><span class="pill ${esc(e.action)}">${esc(e.action)}</span><span class="sub">${esc(fmt(e.at))}${e.note?' · <span class="who">'+esc(e.note.replace('Scanned by ',''))+'</span>':''}${e.job?' · '+esc(e.job):''}</span></li>`).join('') : '<li class="empty">No scans yet.</li>';
   } else if (tab==='out') {
     const out=all.filter(i=>i.status!=='In' && m(i)); const g={};
     out.forEach(i=>{ const k=i.status==='Repair'?'In repair':(i.job||'No job name'); (g[k]=g[k]||[]).push(i); });
-    L.innerHTML = out.length ? Object.entries(g).map(([k,v])=>`<li class="grp">${esc(k)} · ${v.length}</li>`+v.map(row).join('')).join('') : '<li class="empty">Everything is in.</li>';
+    L.innerHTML = out.length ? Object.entries(g).map(([k,v])=>`<li class="grp">${esc(k)} · ${v.length}</li>`+v.map(i=>row(i)).join('')).join('') : '<li class="empty">Everything is in.</li>';
+  } else if (tab==='in') {
+    const f=all.filter(i=>i.status==='In' && m(i));
+    L.innerHTML = f.length ? f.map(i=>row(i)).join('') : '<li class="empty">Nothing is in.</li>';
   } else {
-    const f=all.filter(m); L.innerHTML = f.length ? f.map(row).join('') : '<li class="empty">No gear matches.</li>';
+    const html=[];
+    groups.forEach((units,k)=>{
+      const vis=units.filter(m); if(!vis.length) return;
+      if(units.length<2){ html.push(row(units[0])); return; }
+      const inn=units.filter(u=>u.status==='In').length;
+      html.push(`<li class="ghead"><span>${esc(k)} ×${units.length}</span><small><b>${inn}/${units.length}</b> in</small></li>`+vis.map(u=>row(u,'sub2')).join(''));
+    });
+    L.innerHTML = html.length ? html.join('') : '<li class="empty">No gear matches.</li>';
   }
   renderJob();
 }
