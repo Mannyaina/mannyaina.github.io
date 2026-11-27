@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#141414">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="apple-mobile-web-app-title" content="Gear Check">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" href="icon-192.png">
+<title>Gear Check</title>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@800&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f4ef;--card:#fff;--ink:#141414;--mute:#66625a;--line:#e2ddd2;--out:#ff5a1f;--outbg:#fff0e8;--in:#0f8a4a;--inbg:#e6f6ec;--rep:#c62828;--repbg:#fdeaea}
+@media(prefers-color-scheme:dark){:root{--bg:#121212;--card:#1c1c1c;--ink:#f2f0ea;--mute:#a39f96;--line:#2e2e2e;--outbg:#3a1d10;--in:#3ccf7e;--inbg:#10301e;--rep:#ff6b6b;--repbg:#3a1414}}
+*{box-sizing:border-box;min-width:0}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 Inter,system-ui,sans-serif;overflow-x:clip;-webkit-tap-highlight-color:transparent}
+h1,h2,.stamp,.big{font-family:Archivo,Inter,sans-serif}
+header{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:calc(14px + env(safe-area-inset-top)) max(4vw,16px) 14px;background:#141414;color:#f6f4ef}
+header h1{margin:0;font-size:21px;font-weight:800}
+#sync{font-size:13px;display:flex;align-items:center;gap:6px}
+#sync i{width:9px;height:9px;border-radius:50%;background:#999;display:inline-block}
+#sync.ok i{background:#3ccf7e}#sync.bad i{background:#ff6b6b}#sync.wait i{background:#ffb020}
+main{display:grid;gap:16px;padding:16px max(4vw,16px) calc(40px + env(safe-area-inset-bottom));max-width:1240px;margin:auto}
+@media(min-width:900px){main{grid-template-columns:minmax(0,5fr) minmax(0,6fr);align-items:start}}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px}
+label{font-size:13px;font-weight:600;color:var(--mute);display:block;margin-bottom:6px}
+input,button{font:inherit;font-size:16px;color:inherit}
+input[type=text],input[type=password],input[type=tel]{width:100%;height:48px;border:1.5px solid var(--line);border-radius:10px;padding:0 14px;background:var(--bg)}
+input:focus-visible,button:focus-visible{outline:3px solid var(--out);outline-offset:2px}
+.modes{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin-top:12px}
+.modes button{height:44px;border-radius:10px;border:1.5px solid var(--line);background:var(--bg);font-weight:600}
+.modes button[aria-pressed=true]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.hint{font-size:13px;color:var(--mute);margin:8px 0 0}
+#scan{height:64px;font-size:22px;font-family:Archivo,sans-serif;font-weight:800;letter-spacing:.04em;border:3px dashed var(--ink);text-transform:uppercase}
+#scan:focus{border-style:solid;border-color:var(--out)}
+.ready{display:flex;justify-content:space-between;align-items:center;margin-top:6px;font-size:13px;color:var(--mute)}
+.link{border:0;background:none;color:var(--out);font-weight:600;font-size:13px;padding:6px 0}
+#result{margin-top:12px;border-radius:12px;padding:18px;border:1.5px solid var(--line);min-height:140px;display:grid;gap:4px;align-content:center}
+#result.Out{background:var(--outbg);border-color:var(--out)}#result.In{background:var(--inbg);border-color:var(--in)}
+#result.Repair,#result.warn{background:var(--repbg);border-color:var(--rep)}
+.stamp{font-size:clamp(40px,12vw,60px);font-weight:800;line-height:1}
+.Out .stamp{color:var(--out)}.In .stamp{color:var(--in)}.Repair .stamp,.warn .stamp{color:var(--rep)}
+.big{font-size:22px;font-weight:800;line-height:1.15}
+.meta{font-size:14px;color:var(--mute)}
+.row2{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.btn{height:44px;padding:0 16px;border-radius:10px;border:1.5px solid var(--ink);background:transparent;font-weight:600}
+.btn.solid{background:var(--ink);color:var(--bg)}
+.bar{height:10px;border-radius:6px;background:var(--line);overflow:hidden;margin:8px 0}
+.bar i{display:block;height:100%;background:var(--in);width:0;transition:width .3s}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+.tabs button{height:40px;padding:0 14px;border-radius:20px;border:1.5px solid var(--line);background:var(--card);font-weight:600;font-size:14px}
+.tabs button[aria-pressed=true]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+ul{list-style:none;margin:0;padding:0}
+li.it{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:2px 10px;padding:12px 4px;border-bottom:1px solid var(--line)}
+.nm{font-weight:600}.sub{font-size:13px;color:var(--mute);grid-column:1/-1}
+.pill{font-size:12px;font-weight:700;padding:4px 10px;border-radius:12px;white-space:nowrap;align-self:start}
+.pill.In{background:var(--inbg);color:var(--in)}.pill.Out{background:var(--outbg);color:var(--out)}.pill.Repair{background:var(--repbg);color:var(--rep)}
+.grp{font-size:13px;font-weight:700;color:var(--mute);margin:14px 0 2px}
+.empty{color:var(--mute);padding:20px 4px}
+h2{font-size:20px;margin:0 0 10px}
+#login{max-width:420px;margin:12vh auto;padding:0 16px}
+#login .card{display:grid;gap:10px}
+#err{color:var(--rep);font-size:14px;min-height:20px}
+dialog{border:1px solid var(--line);border-radius:14px;background:var(--card);color:var(--ink);padding:20px;width:min(420px,92vw)}
+dialog::backdrop{background:rgba(0,0,0,.45)}
+.sheet{display:grid;gap:8px;margin-top:12px}
+.sheet button{height:48px;border-radius:10px;font-weight:700;border:0}
+#toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:10px;font-size:14px;opacity:0;pointer-events:none;transition:opacity .2s;max-width:90vw}
+#toast.on{opacity:1}
+[hidden]{display:none!important}
+</style>
+</head>
+<body>
+<header><h1>Gear Check</h1><span id="sync" class="wait"><i></i><span id="synctxt">Loading</span></span></header>
+
+<section id="login" hidden>
+ <div class="card">
+  <h2>Crew sign in</h2>
+  <label for="pin">Crew PIN</label><input type="password" id="pin" inputmode="numeric" autocomplete="off">
+  <label for="who">Your name</label><input type="text" id="who" placeholder="Manny" autocomplete="given-name">
+  <div id="err"></div>
+  <button class="btn solid" id="go" type="button">Start scanning</button>
+ </div>
+</section>
+
+<main id="app" hidden>
+<section>
+ <div class="card">
+  <label for="job">Job / client</label>
+  <input type="text" id="job" placeholder="Smith wedding, Birmingham" autocomplete="off">
+  <div class="modes" role="group" aria-label="Scan mode">
+   <button data-mode="Auto" aria-pressed="true">Auto</button>
+   <button data-mode="Out" aria-pressed="false">Out</button>
+   <button data-mode="In" aria-pressed="false">In</button>
+   <button data-mode="Repair" aria-pressed="false">Repair</button>
+  </div>
+  <p class="hint" id="modehint">Auto: gear that's in goes out on this job. Gear that's out comes back in.</p>
+ </div>
+ <div class="card" style="margin-top:16px">
+  <label for="scan">Scan a label</label>
+  <input type="text" id="scan" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="Scan or type ID">
+  <div class="ready"><span id="readytxt">Ready to scan</span><button class="link" id="focusbtn" type="button">Tap to scan</button></div>
+  <div id="result"><div class="meta">Scan a QR code or barcode. The last item shows here.</div></div>
+ </div>
+ <div class="card" id="jobbox" style="margin-top:16px" hidden>
+  <h2 id="jobtitle"></h2>
+  <div class="bar"><i id="jobbar"></i></div>
+  <div class="meta" id="jobstat"></div>
+  <ul id="joblist"></ul>
+ </div>
+</section>
+<section class="card">
+ <div class="tabs" role="group" aria-label="View">
+  <button data-tab="out" aria-pressed="true">Out now</button>
+  <button data-tab="all" aria-pressed="false">All gear</button>
+  <button data-tab="hist" aria-pressed="false">History</button>
+ </div>
+ <input type="text" id="search" placeholder="Search name or ID" autocomplete="off" style="height:44px;margin-bottom:10px">
+ <ul id="list"></ul>
+ <div class="row2"><button class="btn" id="refresh" type="button">Refresh</button><button class="link" id="signout" type="button">Sign out</button></div>
+</section>
+</main>
+
+<dialog id="dlg">
+ <div class="big" id="dlgname"></div><div class="meta" id="dlgsub"></div>
+ <div class="sheet">
+  <button style="background:var(--out);color:#fff" data-set="Out">Mark out</button>
+  <button style="background:var(--in);color:#fff" data-set="In">Mark in</button>
+  <button style="background:var(--rep);color:#fff" data-set="Repair">Mark for repair</button>
+  <button class="btn" data-set="">Cancel</button>
+ </div>
+</dialog>
+<dialog id="adddlg">
+ <div class="big">New item</div><div class="meta" id="addid"></div>
+ <div class="sheet">
+  <label for="addname">Name</label><input type="text" id="addname" placeholder="Rode NTG mic">
+  <label for="addcat">Category</label><input type="text" id="addcat" placeholder="Audio">
+  <button class="btn solid" id="addsave" type="button">Add and scan</button>
+  <button class="btn" id="addcancel" type="button">Cancel</button>
+ </div>
+</dialog>
+<div id="toast" role="status"></div>
+
+<script>
+{
+const API = 'https://script.google.com/macros/s/AKfycbzgjs2m6cYJmYDCkcPeUB6wEYJuqSTB5MxY4T1QIHse5xYeLuzqIjshotrqEnW9GSt9/exec';
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const ls = (k, v) => { try { if (v === undefined) return localStorage.getItem(k); if (v === null) localStorage.removeItem(k); else localStorage.setItem(k, v); } catch (e) {} return null; };
+let gear = new Map(), recent = [], mode = 'Auto', tab = 'out', lastScan = {id:'', t:0};
+let queue = JSON.parse(ls('queue') || '[]');
+const pin = () => ls('pin') || '', who = () => ls('who') || '';
+const fmt = iso => { if (!iso) return ''; const d = new Date(iso); if (isNaN(d)) return ''; return d.toLocaleDateString('en-GB',{day:'2-digit',month:'short'})+' '+d.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'}); };
+function toast(t){ const el=$('#toast'); el.textContent=t; el.classList.add('on'); clearTimeout(toast.t); toast.t=setTimeout(()=>el.classList.remove('on'),2400); }
+function beep(ok){ try{ const a=beep.a||(beep.a=new (window.AudioContext||window.webkitAudioContext)()); const o=a.createOscillator(),g=a.createGain(); o.frequency.value=ok?880:220; g.gain.value=.08; o.connect(g); g.connect(a.destination); o.start(); o.stop(a.currentTime+(ok?.12:.35)); }catch(e){} try{ navigator.vibrate && navigator.vibrate(ok?40:[80,60,80]); }catch(e){} }
+function setSync(cls, t){ $('#sync').className=cls; $('#synctxt').textContent=t; }
+
+async function api(params){
+  const u = new URL(API); Object.entries({...params, pin: pin()}).forEach(([k,v]) => u.searchParams.set(k, v));
+  const ctl = new AbortController(); const tm = setTimeout(() => ctl.abort(), 20000);
+  try { const r = await fetch(u, {signal: ctl.signal, redirect: 'follow'}); return await r.json(); }
+  finally { clearTimeout(tm); }
+}
+
+/* ---------- sign in ---------- */
+async function start(){
+  $('#job').value = ls('job') || '';
+  $('#login').hidden = true; $('#app').hidden = false;
+  render(); refocus(); await load(); flush();
+}
+$('#go').onclick = async () => {
+  const p = $('#pin').value.trim(), w = $('#who').value.trim();
+  if (!p) { $('#err').textContent = 'Enter the crew PIN.'; return; }
+  if (!w) { $('#err').textContent = 'Enter your name.'; return; }
+  ls('pin', p); ls('who', w); $('#err').textContent = 'Checking…';
+  try { const d = await api({action:'state'}); if (!d.ok) { $('#err').textContent = d.error==='pin' ? 'That PIN is wrong.' : 'Could not connect.'; ls('pin', null); return; } apply(d); start(); }
+  catch (e) { $('#err').textContent = 'No connection. Try again with signal.'; }
+};
+$('#signout').onclick = () => { ls('pin', null); location.reload(); };
+
+/* ---------- data ---------- */
+function apply(d){
+  gear = new Map(d.items.map(i => [i.id, i]));
+  recent = d.recent || [];
+  ls('cache', JSON.stringify(d));
+  render();
+}
+async function load(){
+  setSync('wait', 'Syncing');
+  try { const d = await api({action:'state'}); if (!d.ok) { if (d.error==='pin') { ls('pin', null); location.reload(); } throw 0; } apply(d); setSync(queue.length ? 'wait' : 'ok', queue.length ? queue.length+' waiting' : 'Synced'); }
+  catch (e) { setSync('bad', 'Offline'); }
+}
+let flushing = false;
+async function flush(){
+  if (flushing) return; flushing = true;
+  try { await flushInner(); } finally { flushing = false; }
+}
+async function flushInner(){
+  while (queue.length) {
+    const q = queue[0];
+    try {
+      const d = await api({action:'scan', ...q});
+      if (!d.ok && d.error !== 'unknown') throw 0;
+      queue.shift(); ls('queue', JSON.stringify(queue));
+    } catch (e) { setSync('bad', queue.length+' scans waiting'); return; }
+  }
+  await load();
+}
+setInterval(() => { if (!$('#app').hidden) (queue.length ? flush() : load()); }, 30000);
+window.addEventListener('online', flush);
+$('#refresh').onclick = () => { load(); refocus(); };
+
+/* ---------- scanning ---------- */
+const scan = $('#scan');
+const typing = () => ['job','search','addname','addcat','pin','who'].includes(document.activeElement?.id) || $('#dlg').open || $('#adddlg').open;
+function refocus(){ if (!typing() && !$('#app').hidden) scan.focus({preventScroll:true}); }
+scan.addEventListener('keydown', e => { if (e.key==='Enter' || e.key==='Tab'){ e.preventDefault(); const v=scan.value.trim().toUpperCase().replace(/\s+/g,''); scan.value=''; if (v) handle(v); } });
+scan.addEventListener('blur', () => { $('#readytxt').textContent='Tap the scan box before scanning'; setTimeout(refocus, 400); });
+scan.addEventListener('focus', () => { $('#readytxt').textContent='Ready to scan'; });
+$('#focusbtn').onclick = () => scan.focus();
+let buf='', bufT=0;
+document.addEventListener('keydown', e => {
+  if (document.activeElement===scan || typing() || $('#app').hidden) return;
+  const now=Date.now(); if (now-bufT>120) buf=''; bufT=now;
+  if (e.key==='Enter'||e.key==='Tab'){ if (buf.length>3){ e.preventDefault(); handle(buf.trim().toUpperCase()); } buf=''; return; }
+  if (e.key.length===1) buf+=e.key;
+});
+$('#job').addEventListener('input', () => { ls('job', $('#job').value); renderJob(); });
+$('#job').addEventListener('keydown', e => { if (e.key==='Enter'){ e.preventDefault(); scan.focus(); } });
+document.querySelectorAll('.modes button').forEach(b => b.onclick = () => {
+  mode=b.dataset.mode; document.querySelectorAll('.modes button').forEach(x => x.setAttribute('aria-pressed', x===b));
+  $('#modehint').textContent = mode==='Auto' ? "Auto: gear that's in goes out on this job. Gear that's out comes back in." : `Every scan marks the item ${mode==='Repair'?'for repair':mode.toLowerCase()}.`;
+  scan.focus();
+});
+
+function handle(id){
+  const now = Date.now();
+  if (id===lastScan.id && now-lastScan.t<3000) return;
+  lastScan = {id, t:now};
+  const it = gear.get(id);
+  if (!it) { warn(id); return; }
+  const action = mode==='Auto' ? (it.status==='In' ? 'Out' : 'In') : mode;
+  send(id, action);
+}
+function send(id, action){
+  const it = gear.get(id); const at = new Date().toISOString();
+  const job = action==='Out' ? ($('#job').value.trim() || 'No job name') : (it.job || $('#job').value.trim());
+  Object.assign(it, {status: action, job, at});
+  recent.unshift({at, id, action, job, note: 'Scanned by '+who()});
+  show(it, action);
+  beep(true); render();
+  queue.push({id, mode: action, job: $('#job').value.trim(), by: who(), at}); ls('queue', JSON.stringify(queue));
+  setSync('wait', 'Saving');
+  flush();
+}
+function show(it, action){
+  const r=$('#result'); r.className=action;
+  r.innerHTML=`<div class="stamp">${esc(action==='Repair'?'Repair':action.toUpperCase())}</div><div class="big">${esc(it.name)}</div><div class="meta">${esc(it.id)}${it.job?' · '+esc(it.job):''} · ${esc(fmt(it.at))}</div>`;
+}
+function warn(id){
+  beep(false);
+  const r=$('#result'); r.className='warn';
+  r.innerHTML=`<div class="stamp">Unknown</div><div class="big">${esc(id)}</div><div class="meta">This code isn't on the gear list.</div><div class="row2"><button class="btn solid" id="addnew" type="button">Add it to the list</button></div>`;
+  $('#addnew').onclick = () => { $('#addid').textContent=id; $('#addname').value=''; $('#addcat').value=''; $('#adddlg').showModal(); $('#addname').focus(); $('#addsave').onclick=()=>addItem(id); };
+}
+$('#addcancel').onclick = () => { $('#adddlg').close(); refocus(); };
+async function addItem(id){
+  const name=$('#addname').value.trim(); if (!name){ $('#addname').focus(); return; }
+  const cat=$('#addcat').value.trim() || 'Other';
+  $('#adddlg').close();
+  try { const d = await api({action:'add', id, name, cat}); if (!d.ok) throw 0; }
+  catch (e) { toast('Could not add the item. Check your signal.'); refocus(); return; }
+  gear.set(id, {id, name, cat, status:'In', job:'', at:''});
+  send(id, mode==='Auto' ? 'Out' : mode); refocus();
+}
+
+/* ---------- manual change ---------- */
+let dlgId = null;
+function openItem(id){ const it=gear.get(id); if (!it) return; dlgId=id;
+  $('#dlgname').textContent=it.name; $('#dlgsub').textContent=`${id} · ${it.status}${it.job?' · '+it.job:''}${it.at?' · '+fmt(it.at):''}`; $('#dlg').showModal(); }
+document.querySelectorAll('#dlg [data-set]').forEach(b => b.onclick = () => { $('#dlg').close(); if (b.dataset.set && dlgId) send(dlgId, b.dataset.set); refocus(); });
+
+/* ---------- render ---------- */
+document.querySelectorAll('.tabs button').forEach(b => b.onclick = () => { tab=b.dataset.tab; document.querySelectorAll('.tabs button').forEach(x=>x.setAttribute('aria-pressed', x===b)); render(); });
+$('#search').addEventListener('input', render);
+function row(it){ return `<li class="it" data-id="${esc(it.id)}"><span class="nm">${esc(it.name)}</span><span class="pill ${esc(it.status)}">${esc(it.status)}</span><span class="sub">${esc(it.id)}${it.job?' · '+esc(it.job):''}${it.at?' · '+esc(fmt(it.at)):''}</span></li>`; }
+function render(){
+  const q=$('#search').value.trim().toLowerCase();
+  const m = it => !q || it.id.toLowerCase().includes(q) || it.name.toLowerCase().includes(q);
+  const all=[...gear.values()].sort((a,b)=>a.id.localeCompare(b.id));
+  const L=$('#list');
+  if (tab==='hist') {
+    const h=recent.filter(e=>!q || e.id.toLowerCase().includes(q) || (gear.get(e.id)?.name||'').toLowerCase().includes(q));
+    L.innerHTML = h.length ? h.map(e=>`<li class="it" data-id="${esc(e.id)}"><span class="nm">${esc(gear.get(e.id)?.name||e.id)}</span><span class="pill ${esc(e.action)}">${esc(e.action)}</span><span class="sub">${esc(fmt(e.at))} · ${esc(e.id)}${e.job?' · '+esc(e.job):''}${e.note?' · '+esc(e.note.replace('Scanned by ','')):''}</span></li>`).join('') : '<li class="empty">No scans yet.</li>';
+  } else if (tab==='out') {
+    const out=all.filter(i=>i.status!=='In' && m(i)); const g={};
+    out.forEach(i=>{ const k=i.status==='Repair'?'In repair':(i.job||'No job name'); (g[k]=g[k]||[]).push(i); });
+    L.innerHTML = out.length ? Object.entries(g).map(([k,v])=>`<li class="grp">${esc(k)} · ${v.length}</li>`+v.map(row).join('')).join('') : '<li class="empty">Everything is in.</li>';
+  } else {
+    const f=all.filter(m); L.innerHTML = f.length ? f.map(row).join('') : '<li class="empty">No gear matches.</li>';
+  }
+  renderJob();
+}
+$('#list').addEventListener('click', e => { const li=e.target.closest('li[data-id]'); if (li) openItem(li.dataset.id); });
+$('#joblist').addEventListener('click', e => { const li=e.target.closest('li[data-id]'); if (li) openItem(li.dataset.id); });
+function renderJob(){
+  const job=$('#job').value.trim(), box=$('#jobbox');
+  const taken=new Set(recent.filter(e=>e.action==='Out' && e.job===job).map(e=>e.id));
+  gear.forEach(i=>{ if (i.job===job) taken.add(i.id); });
+  if (!job || !taken.size) { box.hidden=true; return; }
+  box.hidden=false;
+  const still=[...taken].map(id=>gear.get(id)).filter(i=>i && i.status==='Out' && i.job===job);
+  const back=taken.size-still.length;
+  $('#jobtitle').textContent=job;
+  $('#jobbar').style.width=(back/taken.size*100)+'%';
+  $('#jobstat').textContent = still.length ? `${taken.size} taken · ${back} back · ${still.length} still out` : `All ${taken.size} items are back.`;
+  $('#joblist').innerHTML=still.map(row).join('');
+}
+
+/* ---------- boot ---------- */
+try { const c = JSON.parse(ls('cache') || 'null'); if (c && c.items) { gear = new Map(c.items.map(i=>[i.id,i])); recent = c.recent || []; } } catch (e) {}
+if (pin()) start(); else { $('#login').hidden = false; $('#who').value = who(); setSync('wait', 'Sign in'); }
+if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(()=>{});
+}
+</script>
+</body>
+</html>
