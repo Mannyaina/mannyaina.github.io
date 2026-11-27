@@ -239,6 +239,7 @@ $('#signout').onclick = () => { ls('pin', null); location.reload(); };
 /* ---------- data ---------- */
 function apply(d){
   gear = new Map(d.items.map(i => [i.id, i]));
+  queue.forEach(q => { const it = gear.get(q.id); if (it) Object.assign(it, {status: q.mode, job: q.mode==='Out' ? (q.job || 'No job name') : (it.job || q.job), at: q.at, by: q.by}); });
   recent = d.recent || [];
   ls('cache', JSON.stringify(d));
   render();
@@ -248,10 +249,10 @@ async function load(){
   try { const d = await api({action:'state'}); if (!d.ok) { if (d.error==='pin') { ls('pin', null); location.reload(); } throw 0; } apply(d); setSync(queue.length ? 'wait' : 'ok', queue.length ? queue.length+' waiting' : 'Synced'); }
   catch (e) { setSync('bad', 'Offline'); }
 }
-let flushing = false;
+let flushing = false, flushAgain = false;
 async function flush(){
-  if (flushing) return; flushing = true;
-  try { await flushInner(); } finally { flushing = false; }
+  if (flushing) { flushAgain = true; return; } flushing = true;
+  try { do { flushAgain = false; await flushInner(); } while (flushAgain && queue.length); } finally { flushing = false; }
 }
 async function flushInner(){
   while (queue.length) {
