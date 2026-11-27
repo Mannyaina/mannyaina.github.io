@@ -250,6 +250,7 @@ function apply(d){
 }
 async function load(){
   setSync('wait', 'Syncing');
+  lastLoad = Date.now();
   try { const d = await api({action:'state'}); if (!d.ok) { if (d.error==='pin') { ls('pin', null); location.reload(); } throw 0; } apply(d); setSync(queue.length ? 'wait' : 'ok', queue.length ? queue.length+' waiting' : 'Synced'); }
   catch (e) { setSync('bad', 'Offline'); }
 }
@@ -269,7 +270,11 @@ async function flushInner(){
   }
   await load();
 }
-setInterval(() => { if (!$('#app').hidden) (queue.length ? flush() : load()); }, 30000);
+let lastLoad = 0;
+function tick(force){ if ($('#app').hidden || document.hidden) return; if (!force && Date.now()-lastLoad < 12000) return; lastLoad = Date.now(); queue.length ? flush() : load(); }
+setInterval(() => tick(false), 15000);
+document.addEventListener('visibilitychange', () => { if (!document.hidden) { tick(true); swReg && swReg.update().catch(()=>{}); } });
+window.addEventListener('focus', () => tick(true));
 window.addEventListener('online', flush);
 
 
@@ -484,7 +489,14 @@ function renderJob(){
 /* ---------- boot ---------- */
 try { const c = JSON.parse(ls('cache') || 'null'); if (c && c.items) { gear = new Map(c.items.map(i=>[i.id,i])); recent = c.recent || []; } } catch (e) {}
 if (pin()) start(); else { $('#login').hidden = false; $('#who').value = who(); setSync('wait', 'Sign in'); }
-if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(()=>{});
+let swReg = null;
+if ('serviceWorker' in navigator) {
+  const hadController = !!navigator.serviceWorker.controller;
+  navigator.serviceWorker.register('sw.js', {updateViaCache: 'none'}).then(r => { swReg = r; r.update().catch(()=>{}); }).catch(()=>{});
+  let reloaded = false;
+  const safeReload = () => { if (reloaded) return; if (!$('#cam').hidden || document.querySelector('dialog[open]') || queue.length) { setTimeout(safeReload, 3000); return; } reloaded = true; location.reload(); };
+  navigator.serviceWorker.addEventListener('controllerchange', () => { if (hadController) safeReload(); });
+}
 }
 </script>
 </body>
