@@ -78,6 +78,9 @@ dialog::backdrop{background:rgba(0,0,0,.45)}
 #toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:10px;font-size:14px;opacity:0;pointer-events:none;transition:opacity .2s;max-width:90vw}
 #toast.on{opacity:1}
 [hidden]{display:none!important}
+html,body{overscroll-behavior-y:contain}
+#ptr{position:fixed;left:50%;top:calc(64px + env(safe-area-inset-top));transform:translate(-50%,-60px);z-index:40;background:var(--ink);color:var(--bg);font-size:13px;font-weight:600;padding:8px 14px;border-radius:20px;opacity:0;pointer-events:none;white-space:nowrap}
+#ptr.anim{transition:transform .2s,opacity .2s}
 .asrow{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:12px;padding-bottom:12px;border-bottom:1px solid var(--line)}
 .asrow span{font-size:13px;font-weight:600;color:var(--mute)}
 #asbtn{height:40px;padding:0 14px;border-radius:20px;border:1.5px solid var(--ink);background:var(--ink);color:var(--bg);font-weight:700;max-width:60%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -147,7 +150,7 @@ dialog::backdrop{background:rgba(0,0,0,.45)}
  <input type="text" id="search" placeholder="Search name or ID" autocomplete="off" style="height:44px;margin-bottom:10px">
  <div id="stats" class="stats"></div>
  <ul id="list"></ul>
- <div class="row2"><button class="btn" id="refresh" type="button">Refresh</button><button class="link" id="signout" type="button">Sign out</button></div>
+ <div class="row2"><button class="link" id="signout" type="button">Sign out</button></div>
 </section>
 </main>
 
@@ -180,6 +183,7 @@ dialog::backdrop{background:rgba(0,0,0,.45)}
  <div id="camguide"></div>
  <div id="cambar"><div id="camres"><span>Point the camera at a QR label</span></div><button id="camclose" type="button">Done scanning</button></div>
 </div>
+<div id="ptr" aria-live="polite">Pull to refresh</div>
 <div id="toast" role="status"></div>
 
 <script>
@@ -267,7 +271,7 @@ async function flushInner(){
 }
 setInterval(() => { if (!$('#app').hidden) (queue.length ? flush() : load()); }, 30000);
 window.addEventListener('online', flush);
-$('#refresh').onclick = () => { load(); refocus(); };
+
 
 /* ---------- scanning ---------- */
 const scan = $('#scan');
@@ -387,6 +391,31 @@ async function camLoop(){
   }catch(e){}
   setTimeout(camLoop, detector ? 120 : 180);
 }
+
+
+/* ---------- pull to refresh ---------- */
+let ptrY=null, ptrD=0, ptrBusy=false;
+const ptr=$('#ptr');
+function ptrShow(d, txt){ ptr.classList.remove('anim'); ptr.style.opacity=Math.min(1,d/40); ptr.style.transform=`translate(-50%,${Math.min(d,90)-60}px)`; ptr.textContent=txt; }
+function ptrHide(){ ptr.classList.add('anim'); ptr.style.opacity=0; ptr.style.transform='translate(-50%,-60px)'; }
+document.addEventListener('touchstart', e => {
+  if (ptrBusy || $('#app').hidden || !$('#cam').hidden || document.querySelector('dialog[open]') || window.scrollY > 0) { ptrY=null; return; }
+  ptrY=e.touches[0].clientY; ptrD=0;
+}, {passive:true});
+document.addEventListener('touchmove', e => {
+  if (ptrY===null) return;
+  ptrD=(e.touches[0].clientY-ptrY)*0.6;
+  if (ptrD<=0 || window.scrollY>0) { ptrHide(); return; }
+  ptrShow(ptrD, ptrD>70 ? 'Release to refresh' : 'Pull to refresh');
+}, {passive:true});
+document.addEventListener('touchend', async () => {
+  if (ptrY===null) return; ptrY=null;
+  if (ptrD>70) {
+    ptrBusy=true; ptrShow(80,'Refreshing…');
+    try { await flush(); await load(); } finally { ptrBusy=false; ptr.textContent = $('#sync').className==='bad' ? 'No connection' : 'Up to date'; setTimeout(ptrHide, 700); }
+  } else ptrHide();
+  ptrD=0;
+});
 
 /* ---------- manual change ---------- */
 let dlgId = null;
